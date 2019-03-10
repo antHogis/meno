@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.math.BigDecimal;
+
 public class AddExpenseFragment extends Fragment {
 
     private EditText categoryField;
@@ -41,14 +43,14 @@ public class AddExpenseFragment extends Fragment {
         boolean addable = false;
         String toastMessage = "";
         String category;
-        double cost;
+        BigDecimal cost;
 
         try {
             if ((category = categoryField.getText().toString()).equals("")) {
                 throw new EmptyFieldException();
             }
 
-            cost = Double.parseDouble(costField.getText().toString());
+            cost = new BigDecimal(costField.getText().toString());
 
             addable = true;
         } catch (NumberFormatException e) {

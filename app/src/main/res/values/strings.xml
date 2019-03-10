@@ -8,6 +8,7 @@
 
     <string name="hint_category">Category</string>
     <string name="hint_cost">Cost</string>
+    <string name="hint_date">Date (Default: today)</string>
 
     <string name="toast_expense_add_success">Expense added successfully.</string>
     <string name="toast_expense_add_failure_empty_fields">Expense could not be added. Some fields are Empty!</string>
