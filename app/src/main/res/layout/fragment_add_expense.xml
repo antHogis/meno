@@ -4,28 +4,43 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
-
-
-    <EditText
-        android:id="@+id/editText3"
-        style="@style/ThemeOverlay.MaterialComponents.TextInputEditText.OutlinedBox"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:ems="10"
-        android:hint="@string/hint_category"
-        android:inputType="text" />
+        android:layout_centerInParent="true">
 
-    <EditText
-        android:id="@+id/editText4"
-        android:layout_width="168dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="1dp"
-        android:layout_toEndOf="@+id/editText3"
-        android:ems="10"
-        android:inputType="numberDecimal"
-        />
+        <EditText
+            android:id="@+id/editCategoryText"
+            style="@style/Widget.MaterialComponents.TextInputEditText.OutlinedBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:ems="10"
+            android:hint="@string/hint_category"
+            android:inputType="text"
+            android:textAlignment="center" />
+
+        <EditText
+            android:id="@+id/editCostText"
+            style="@style/Widget.MaterialComponents.TextInputEditText.OutlinedBox"
+            android:layout_width="168dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="1dp"
+            android:layout_toEndOf="@+id/editCategoryText"
+            android:ems="10"
+            android:hint="@string/hint_cost"
+            android:inputType="numberDecimal"
+            android:textAlignment="center" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/editCategoryText"
+            android:layout_centerHorizontal="true"
+            android:text="@string/title_add_expense" />
+    </RelativeLayout>
 </RelativeLayout>
