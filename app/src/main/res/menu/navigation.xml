@@ -7,7 +7,7 @@
         android:title="@string/title_categories" />
 
     <item
-        android:id="@+id/navigation_add"
+        android:id="@+id/navigation_add_expense"
         android:icon="@drawable/ic_checked"
         android:title="@string/title_add_expense" />
 
