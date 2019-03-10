@@ -3,6 +3,6 @@
     <string name="title_add_expense">Add Expense</string>
     <string name="title_categories">Categories</string>
     <string name="title_expense_list">Expenses</string>
-    <string name="title_chart">Chart</string>
+    <string name="title_charts">Charts</string>
     <string name="hint_category">Category</string>
 </resources>
