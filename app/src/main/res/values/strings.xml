@@ -5,4 +5,5 @@
     <string name="title_expense_list">Expenses</string>
     <string name="title_charts">Charts</string>
     <string name="hint_category">Category</string>
+    <string name="hint_cost">Cost</string>
 </resources>
