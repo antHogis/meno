@@ -48,6 +48,7 @@ public class AddExpenseFragment extends Fragment {
 
         addExpenseButton.setOnClickListener(this::onAddExpenseClicked);
         dateField.setOnFocusChangeListener(this::onDateFocus);
+        dateField.setOnClickListener(this::onDateClicked);
 
         return view;
     }
@@ -58,6 +59,10 @@ public class AddExpenseFragment extends Fragment {
             dateFragment.show(getActivity().getSupportFragmentManager(),
                     getResources().getString(R.string.id_date_picker));
         }
+    }
+
+    private void onDateClicked(View view) {
+        onDateFocus(view, true);
     }
     
     private void onAddExpenseClicked(View view) {
