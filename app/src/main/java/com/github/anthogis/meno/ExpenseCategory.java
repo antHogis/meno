@@ -1,12 +1,12 @@
 package com.github.anthogis.meno;
 
-public class Category {
+public class ExpenseCategory {
     private String name;
 
-    public Category() {
+    public ExpenseCategory() {
     }
 
-    public Category(String name) {
+    public ExpenseCategory(String name) {
         this.name = name;
     }
 
@@ -16,5 +16,10 @@ public class Category {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 }

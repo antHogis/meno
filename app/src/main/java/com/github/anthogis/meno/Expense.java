@@ -3,12 +3,11 @@ package com.github.anthogis.meno;
 import android.support.annotation.NonNull;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.util.Date;
 
 public class Expense {
 
-    private Category category;
+    private ExpenseCategory category;
 
     private BigDecimal cost;
 
@@ -18,17 +17,17 @@ public class Expense {
 
     }
 
-    public Expense(@NonNull Category category, @NonNull BigDecimal cost, @NonNull Date date) {
+    public Expense(@NonNull ExpenseCategory category, @NonNull BigDecimal cost, @NonNull Date date) {
         this.category = category;
         this.cost = cost;
         this.date = date;
     }
 
-    public Category getCategory() {
+    public ExpenseCategory getCategory() {
         return category;
     }
 
-    public void setCategory(Category category) {
+    public void setCategory(ExpenseCategory category) {
         this.category = category;
     }
 

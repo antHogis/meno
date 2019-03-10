@@ -7,9 +7,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -25,7 +27,7 @@ import java.util.GregorianCalendar;
 
 public class AddExpenseFragment extends Fragment {
 
-    private EditText categoryField;
+    private AppCompatAutoCompleteTextView categoryField;
     private EditText costField;
     private EditText dateField;
     private Button addExpenseButton;
@@ -41,7 +43,7 @@ public class AddExpenseFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_expense, container, false);
 
-        categoryField = (EditText) view.findViewById(R.id.editCategoryText);
+        categoryField = (AppCompatAutoCompleteTextView) view.findViewById(R.id.editCategoryText);
         costField = (EditText) view.findViewById(R.id.editCostText);
         dateField = (EditText) view.findViewById(R.id.editDateText);
         addExpenseButton = (Button) view.findViewById(R.id.addExpenseButton);
@@ -50,7 +52,16 @@ public class AddExpenseFragment extends Fragment {
         dateField.setOnFocusChangeListener(this::onDateFocus);
         dateField.setOnClickListener(this::onDateClicked);
 
+        categoryField.setAdapter(ExpenseCategoryManager.getAdapter(view));
+        categoryField.setOnItemClickListener(this::onCategoryItemClicked);
+        categoryField.setThreshold(1);
+
         return view;
+    }
+
+    private void onCategoryItemClicked(AdapterView<?> adapter, View v, int position, long id) {
+        ExpenseCategory category = (ExpenseCategory) adapter.getAdapter().getItem(position);
+        categoryField.setText(category.getName());
     }
 
     private void onDateFocus(View view, boolean hasFocus) {
@@ -103,6 +114,7 @@ public class AddExpenseFragment extends Fragment {
 
         Toast.makeText(getActivity(), toastMessage, Toast.LENGTH_SHORT).show();
     }
+
 
     public static class MyDatePickerFragment extends DialogFragment {
         @Override
