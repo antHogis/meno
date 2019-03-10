@@ -13,4 +13,6 @@
     <string name="toast_expense_add_success">Expense added successfully.</string>
     <string name="toast_expense_add_failure_empty_fields">Expense could not be added. Some fields are Empty!</string>
     <string name="toast_expense_add_failure_invalid_cost">Expense could not be added. Invalid cost!</string>
+
+    <string name="id_date_picker">date_picker</string>
 </resources>
