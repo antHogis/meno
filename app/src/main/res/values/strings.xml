@@ -11,8 +11,9 @@
     <string name="hint_date">Date (Default: today)</string>
 
     <string name="toast_expense_add_success">Expense added successfully.</string>
-    <string name="toast_expense_add_failure_empty_fields">Expense could not be added. Some fields are Empty!</string>
-    <string name="toast_expense_add_failure_invalid_cost">Expense could not be added. Invalid cost!</string>
+    <string name="toast_expense_add_failure_empty_fields">Some fields are empty!</string>
+    <string name="toast_expense_add_failure_invalid_cost">Invalid cost!</string>
+    <string name="toast_expense_add_failure_invalid_date">Invalid date!</string>
 
     <string name="id_date_picker">date_picker</string>
 </resources>

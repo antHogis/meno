@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import java.math.BigDecimal;
 
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
@@ -64,6 +65,7 @@ public class AddExpenseFragment extends Fragment {
         String toastMessage = "";
         String category;
         BigDecimal cost;
+        Date date;
 
         try {
             if ((category = categoryField.getText().toString()).equals("")) {
@@ -72,11 +74,21 @@ public class AddExpenseFragment extends Fragment {
 
             cost = new BigDecimal(costField.getText().toString());
 
+            String dateText = dateField.getText().toString();
+
+            if (dateText.equals("")) {
+                date = DateHelper.now();
+            } else {
+                date = DateHelper.parse(dateField);
+            }
+
             addable = true;
         } catch (NumberFormatException e) {
             toastMessage = getResources().getString(R.string.toast_expense_add_failure_invalid_cost);
         } catch (EmptyFieldException e) {
             toastMessage = getResources().getString(R.string.toast_expense_add_failure_empty_fields);
+        } catch (ParseException e) {
+            toastMessage = getResources().getString(R.string.toast_expense_add_failure_invalid_date);
         }
 
         if (addable) {
