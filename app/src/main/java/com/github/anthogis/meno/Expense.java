@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Date;
 
 public class Expense {
 
@@ -11,13 +12,13 @@ public class Expense {
 
     private BigDecimal cost;
 
-    private LocalDate date;
+    private Date date;
 
     public Expense() {
 
     }
 
-    public Expense(@NonNull Category category, @NonNull BigDecimal cost, @NonNull LocalDate date) {
+    public Expense(@NonNull Category category, @NonNull BigDecimal cost, @NonNull Date date) {
         this.category = category;
         this.cost = cost;
         this.date = date;
@@ -39,11 +40,11 @@ public class Expense {
         this.cost = cost;
     }
 
-    public LocalDate getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(Date date) {
         this.date = date;
     }
 }
