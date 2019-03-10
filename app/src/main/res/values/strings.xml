@@ -1,9 +1,15 @@
 <resources>
     <string name="app_name">Meno</string>
+
     <string name="title_add_expense">Add Expense</string>
     <string name="title_categories">Categories</string>
     <string name="title_expense_list">Expenses</string>
     <string name="title_charts">Charts</string>
+
     <string name="hint_category">Category</string>
     <string name="hint_cost">Cost</string>
+
+    <string name="toast_expense_add_success">Expense added successfully.</string>
+    <string name="toast_expense_add_failure_empty_fields">Expense could not be added. Some fields are Empty!</string>
+    <string name="toast_expense_add_failure_invalid_cost">Expense could not be added. Invalid cost!</string>
 </resources>

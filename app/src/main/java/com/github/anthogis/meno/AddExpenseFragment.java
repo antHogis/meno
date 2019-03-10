@@ -11,7 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class AddExpenseFragment extends Fragment implements View.OnClickListener {
+public class AddExpenseFragment extends Fragment {
 
     private EditText categoryField;
     private EditText costField;
@@ -36,24 +36,30 @@ public class AddExpenseFragment extends Fragment implements View.OnClickListener
 
         return view;
     }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.addExpenseButton:
-                onAddExpenseClicked(view);
-                break;
-        }
-    }
-
+    
     private void onAddExpenseClicked(View view) {
         boolean addable = false;
-        String toastMessage;
+        String toastMessage = "";
+        String category;
+        double cost;
+
+        try {
+            if ((category = categoryField.getText().toString()).equals("")) {
+                throw new EmptyFieldException();
+            }
+
+            cost = Double.parseDouble(costField.getText().toString());
+
+            addable = true;
+        } catch (NumberFormatException e) {
+            toastMessage = getResources().getString(R.string.toast_expense_add_failure_invalid_cost);
+        } catch (EmptyFieldException e) {
+            toastMessage = getResources().getString(R.string.toast_expense_add_failure_empty_fields);
+        }
 
         if (addable) {
-            toastMessage = "foo";
-        } else {
-            toastMessage = "bar";
+            //Implement call to persist Expense
+            toastMessage = getResources().getString(R.string.toast_expense_add_success);
         }
 
         Toast.makeText(getActivity(), toastMessage, Toast.LENGTH_SHORT).show();
