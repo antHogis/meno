@@ -2,16 +2,19 @@ package com.github.anthogis.meno;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.database.SQLException;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatAutoCompleteTextView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -22,6 +25,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class AddExpenseFragment extends Fragment {
 
@@ -29,6 +33,7 @@ public class AddExpenseFragment extends Fragment {
     private EditText costField;
     private EditText dateField;
     private Button addExpenseButton;
+    private List<ExpenseCategory> validCategories;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,7 +55,13 @@ public class AddExpenseFragment extends Fragment {
         dateField.setOnFocusChangeListener(this::onDateFocus);
         dateField.setOnClickListener(this::onDateClicked);
 
-        categoryField.setAdapter(ExpenseCategoryManager.getAdapter(view));
+        DatabaseHelper dbHelper = new DatabaseHelper(getContext());
+        validCategories = dbHelper.findAllCategories();
+        ArrayAdapter<ExpenseCategory> adapter
+                = new ArrayAdapter<>(view.getContext(), R.layout.adapter_expense_category);
+        adapter.addAll(validCategories);
+
+        categoryField.setAdapter(adapter);
         categoryField.setOnItemClickListener(this::onCategoryItemClicked);
         categoryField.setThreshold(1);
 
@@ -88,6 +99,8 @@ public class AddExpenseFragment extends Fragment {
 
             if (categoryText.equals("")) {
                 throw new EmptyFieldException();
+            } else if(!validCategoryName(categoryText)) {
+                throw new InvalidCategoryException();
             } else {
                 category = new ExpenseCategory(categoryText);
             }
@@ -106,19 +119,33 @@ public class AddExpenseFragment extends Fragment {
             addable = true;
         } catch (NumberFormatException e) {
             toastMessage = getResources().getString(R.string.toast_expense_add_failure_invalid_cost);
-        } catch (EmptyFieldException | IllegalArgumentException e) {
+        } catch (EmptyFieldException e) {
             toastMessage = getResources().getString(R.string.toast_expense_add_failure_empty_fields);
         } catch (ParseException e) {
             toastMessage = getResources().getString(R.string.toast_expense_add_failure_invalid_date);
+        } catch (InvalidCategoryException e) {
+            toastMessage = getResources().getString(R.string.toast_expense_add_failure_invalid_category);
         }
 
-        if (addable) {
+        if (addable && expense != null) {
             //TODO Implement call to persist Expense
 
             toastMessage = getResources().getString(R.string.toast_expense_add_success);
+        } else if (addable) {
+
         }
 
         Toast.makeText(getActivity(), toastMessage, Toast.LENGTH_SHORT).show();
+    }
+
+    private boolean validCategoryName(String categoryName) {
+        for (ExpenseCategory category : validCategories) {
+            if (category.getName().equals(categoryName)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static class MyDatePickerFragment extends DialogFragment {

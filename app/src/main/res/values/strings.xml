@@ -13,7 +13,8 @@
     <string name="toast_expense_add_success">Expense added successfully.</string>
     <string name="toast_expense_add_failure_empty_fields">Some fields are empty!</string>
     <string name="toast_expense_add_failure_invalid_cost">Invalid cost!</string>
-    <string name="toast_expense_add_failure_invalid_date">Invalid date!</string>
+    <string name="toast_expense_add_failure_invalid_date">Invalid date! Use calendar selection or format as YYYY:MM:DD</string>
+    <string name="toast_expense_add_failure_invalid_category">Invalid category! Please select from dropdown</string>
 
     <string name="id_date_picker">date_picker</string>
 </resources>
