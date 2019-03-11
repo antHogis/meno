@@ -17,33 +17,47 @@ public class Expense {
 
     }
 
-    public Expense(@NonNull ExpenseCategory category, @NonNull BigDecimal cost, @NonNull Date date) {
-        this.category = category;
-        this.cost = cost;
-        this.date = date;
+    public Expense(@NonNull ExpenseCategory category,
+                   @NonNull BigDecimal cost,
+                   @NonNull Date date) throws IllegalArgumentException {
+        setCategory(category);
+        setCost(cost);
+        setDate(date);
     }
 
     public ExpenseCategory getCategory() {
         return category;
     }
 
-    public void setCategory(ExpenseCategory category) {
-        this.category = category;
+    public void setCategory(ExpenseCategory category) throws IllegalArgumentException{
+        if (category == null) {
+            throw new IllegalArgumentException("Expense does not allow null values");
+        } else {
+            this.category = category;
+        }
     }
 
     public BigDecimal getCost() {
         return cost;
     }
 
-    public void setCost(BigDecimal cost) {
-        this.cost = cost;
+    public void setCost(BigDecimal cost) throws IllegalArgumentException {
+        if (cost == null) {
+            throw new IllegalArgumentException("Expense does not allow null values");
+        } else {
+            this.cost = cost;
+        }
     }
 
     public Date getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setDate(Date date) throws IllegalArgumentException {
+        if (date == null) {
+            throw new IllegalArgumentException("Expense does not allow null values");
+        } else {
+            this.date = date;
+        }
     }
 }
