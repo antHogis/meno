@@ -61,4 +61,16 @@ public class Expense implements Serializable {
             this.date = date;
         }
     }
+
+    @Override
+    public String toString() {
+        return new StringBuilder()
+                .append(super.toString())
+                .append(" {")
+                .append("Category:").append(category.getName()).append(", ")
+                .append("Cost:").append(cost.toString()).append(", ")
+                .append("Date:").append(DateHelper.stringOf(date))
+                .append("}")
+                .toString();
+    }
 }

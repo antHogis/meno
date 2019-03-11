@@ -34,6 +34,7 @@ public class AddExpenseFragment extends Fragment {
     private EditText dateField;
     private Button addExpenseButton;
     private List<ExpenseCategory> validCategories;
+    private DatabaseHelper databaseHelper;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,8 +56,8 @@ public class AddExpenseFragment extends Fragment {
         dateField.setOnFocusChangeListener(this::onDateFocus);
         dateField.setOnClickListener(this::onDateClicked);
 
-        DatabaseHelper dbHelper = new DatabaseHelper(getContext());
-        validCategories = dbHelper.findAllCategories();
+        databaseHelper = new DatabaseHelper(getContext());
+        validCategories = databaseHelper.findAllCategories();
         ArrayAdapter<ExpenseCategory> adapter
                 = new ArrayAdapter<>(view.getContext(), R.layout.adapter_expense_category);
         adapter.addAll(validCategories);
@@ -129,7 +130,7 @@ public class AddExpenseFragment extends Fragment {
 
         if (addable && expense != null) {
             //TODO Implement call to persist Expense
-
+            databaseHelper.add(expense);
             toastMessage = getResources().getString(R.string.toast_expense_add_success);
         } else if (addable) {
 

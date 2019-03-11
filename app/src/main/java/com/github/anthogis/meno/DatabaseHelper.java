@@ -10,21 +10,22 @@ import android.provider.BaseColumns;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
+import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "MenoApp.db";
-    private static final int DATABSE_VESION = 1;
-
-    private static final String CREATE_EXPENSE_TABLE_SQL  = createExpenseTableSql();
-    private static final String DROP_EXPENSE_TABLE_SQL    = dropExpenseTableSql();
-    private static final String CREATE_CATEGORY_TABLE_SQL = createExpenseCategoryTableSql();
-    private static final String DROP_CATEGORY_TABLE_SQL   = dropExpenseCategoryTableSql();
+    private static final int DATABASE_VESION = 1;
+    private Context context;
 
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 1);
+        super(context, DATABASE_NAME, null, DATABASE_VESION);
+        this.context = context;
     }
 
     public void add(ExpenseCategory category) throws SQLException {
@@ -33,8 +34,64 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         getWritableDatabase().insertOrThrow(CategoryTable.TABLE_NAME,null, values);
     }
 
+    public void add(Expense expense) throws SQLException {
+        int categoryId = findCategoryIdByName(expense.getCategory().getName());
+
+        ContentValues values = new ContentValues();
+        values.put(ExpenseTable.COL_CATEGORY, categoryId);
+        values.put(ExpenseTable.COL_COST, expense.getCost().toString());
+        values.put(ExpenseTable.COL_DATE, DateHelper.stringOf(expense.getDate()));
+
+        getWritableDatabase().insertOrThrow(ExpenseTable.TABLE_NAME,null, values);
+    }
+
+    public List<Expense> findAllExpenses() {
+        String sortOrder = ExpenseTable.COL_DATE + " DESC";
+
+        Cursor cursor = getReadableDatabase().query(
+                ExpenseTable.TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                sortOrder
+        );
+
+        List<Expense> expenses;
+
+        if (cursor.getCount() >= 0) {
+            expenses = new ArrayList<>(cursor.getCount());
+        } else {
+            expenses = new ArrayList<>(0);
+        }
+
+        try {
+            while (cursor.moveToNext()) {
+                int categoryIndex = cursor.getColumnIndexOrThrow(ExpenseTable.COL_CATEGORY);
+                int costIndex = cursor.getColumnIndexOrThrow(ExpenseTable.COL_COST);
+                int dateIndex = cursor.getColumnIndexOrThrow(ExpenseTable.COL_DATE);
+
+                String categoryString = findCategoryNameById(cursor.getInt(categoryIndex));
+                String costString = cursor.getString(costIndex);
+                String dateString = cursor.getString(dateIndex);
+
+                ExpenseCategory category = new ExpenseCategory(categoryString);
+                BigDecimal cost = new BigDecimal(costString);
+                Date date = DateHelper.parse(dateString);
+
+                expenses.add(new Expense(category, cost, date));
+            }
+        } catch (SQLException | ParseException e) {
+            Toast.makeText(context, "Could not retrieve expenses", Toast.LENGTH_SHORT).show();
+        } finally {
+            cursor.close();
+        }
+
+        return expenses;
+    }
+
     public List<ExpenseCategory> findAllCategories() {
-        String[] projection = {CategoryTable._ID, CategoryTable.TABLE_NAME};
         String sortOrder = CategoryTable.COL_NAME + " ASC";
 
         Cursor cursor = getReadableDatabase().query(
@@ -56,6 +113,55 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
 
         return categories;
+    }
+
+    public int findCategoryIdByName(String name) throws SQLException {
+        int id = -1;
+        String[] columns = {CategoryTable._ID, CategoryTable.COL_NAME};
+        String selection = CategoryTable.COL_NAME + "= ?";
+        String[] selectionArgs = {name};
+
+        Cursor cursor = getReadableDatabase().query(
+                CategoryTable.TABLE_NAME,
+                columns,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+
+        while (cursor.moveToNext()) {
+            id = cursor.getInt(cursor.getColumnIndexOrThrow(CategoryTable._ID));
+        }
+        cursor.close();
+
+        return id;
+    }
+
+    public String findCategoryNameById(int id) throws SQLException {
+        String name = null;
+
+        String[] columns = {CategoryTable._ID, CategoryTable.COL_NAME};
+        String selection = CategoryTable._ID + "= ?";
+        String[] selectionArgs = {"" + id};
+
+        Cursor cursor = getReadableDatabase().query(
+                CategoryTable.TABLE_NAME,
+                columns,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+
+        while (cursor.moveToNext()) {
+            name = cursor.getString(cursor.getColumnIndexOrThrow(CategoryTable.COL_NAME));
+        }
+        cursor.close();
+
+        return name;
     }
 
     @Override
