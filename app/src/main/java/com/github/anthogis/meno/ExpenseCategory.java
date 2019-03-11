@@ -1,6 +1,8 @@
 package com.github.anthogis.meno;
 
-public class ExpenseCategory {
+import java.io.Serializable;
+
+public class ExpenseCategory implements Serializable {
     private String name;
 
     public ExpenseCategory() {

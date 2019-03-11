@@ -2,10 +2,11 @@ package com.github.anthogis.meno;
 
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class Expense {
+public class Expense implements Serializable {
 
     private ExpenseCategory category;
 
