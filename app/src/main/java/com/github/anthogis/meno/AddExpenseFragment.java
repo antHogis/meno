@@ -20,10 +20,8 @@ import android.widget.Toast;
 import java.math.BigDecimal;
 
 import java.text.ParseException;
-import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 public class AddExpenseFragment extends Fragment {
 
@@ -79,13 +77,19 @@ public class AddExpenseFragment extends Fragment {
     private void onAddExpenseClicked(View view) {
         boolean addable = false;
         String toastMessage = "";
-        String category;
-        BigDecimal cost;
-        Date date;
+
+        ExpenseCategory category = null;
+        BigDecimal cost = null;
+        Date date       = null;
+        Expense expense = null;
 
         try {
-            if ((category = categoryField.getText().toString()).equals("")) {
+            String categoryText = categoryField.getText().toString();
+
+            if (categoryText.equals("")) {
                 throw new EmptyFieldException();
+            } else {
+                category = new ExpenseCategory(categoryText);
             }
 
             cost = new BigDecimal(costField.getText().toString());
@@ -98,23 +102,24 @@ public class AddExpenseFragment extends Fragment {
                 date = DateHelper.parse(dateField);
             }
 
+            expense = new Expense(category, cost, date);
             addable = true;
         } catch (NumberFormatException e) {
             toastMessage = getResources().getString(R.string.toast_expense_add_failure_invalid_cost);
-        } catch (EmptyFieldException e) {
+        } catch (EmptyFieldException | IllegalArgumentException e) {
             toastMessage = getResources().getString(R.string.toast_expense_add_failure_empty_fields);
         } catch (ParseException e) {
             toastMessage = getResources().getString(R.string.toast_expense_add_failure_invalid_date);
         }
 
         if (addable) {
-            //Implement call to persist Expense
+            //TODO Implement call to persist Expense
+
             toastMessage = getResources().getString(R.string.toast_expense_add_success);
         }
 
         Toast.makeText(getActivity(), toastMessage, Toast.LENGTH_SHORT).show();
     }
-
 
     public static class MyDatePickerFragment extends DialogFragment {
         @Override
@@ -127,12 +132,6 @@ public class AddExpenseFragment extends Fragment {
 
             return new DatePickerDialog(getActivity(), this::dateSetAction, year, month, day);
         }
-
-        private DatePickerDialog.OnDateSetListener dateSetListener =
-                (view, year, month, day) -> Toast.makeText(getActivity(),
-                        "selected date is " + view.getYear() +
-                        " / " + (view.getMonth()+1) +
-                        " / " + view.getDayOfMonth(), Toast.LENGTH_SHORT).show();
 
         private void dateSetAction(DatePicker view, int year, int month, int day) {
             EditText dateField = (EditText) getActivity().findViewById(R.id.editDateText);
