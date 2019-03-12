@@ -33,16 +33,9 @@ public class ExpenseListFragment extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_expense_list, container, false);
 
         expenseList = new DatabaseHelper(view.getContext()).findAllExpenses();
-        SimpleTableHeaderAdapter headerAdapter = new SimpleTableHeaderAdapter(
-                view.getContext(),
-                R.string.table_header_category,
-                R.string.table_header_cost,
-                R.string.table_header_date);
-        headerAdapter.setTextColor(ContextCompat.getColor(view.getContext(), R.color.iceWhite));
 
-        expenseTable = (TableView<Expense>) view.findViewById(R.id.expenseTableView);
+        expenseTable = (ExpenseTable) view.findViewById(R.id.expenseTableView);
         expenseTable.setDataAdapter(new ExpenseTableDataAdapter(view.getContext(), expenseList));
-        expenseTable.setHeaderAdapter(headerAdapter);
 
         return view;
     }
