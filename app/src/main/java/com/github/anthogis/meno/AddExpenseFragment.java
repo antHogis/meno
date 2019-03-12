@@ -2,14 +2,12 @@ package com.github.anthogis.meno;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.database.SQLException;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatAutoCompleteTextView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,7 +57,7 @@ public class AddExpenseFragment extends Fragment {
         databaseHelper = new DatabaseHelper(getContext());
         validCategories = databaseHelper.findAllCategories();
         ArrayAdapter<ExpenseCategory> adapter
-                = new ArrayAdapter<>(view.getContext(), R.layout.adapter_expense_category);
+                = new ArrayAdapter<>(view.getContext(), R.layout.adapter_expense_category_small);
         adapter.addAll(validCategories);
 
         categoryField.setAdapter(adapter);

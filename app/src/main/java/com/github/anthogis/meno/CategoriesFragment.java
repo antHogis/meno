@@ -34,7 +34,7 @@ public class CategoriesFragment extends Fragment {
         categories = databaseHelper.findAllCategories();
         ArrayAdapter<ExpenseCategory> categoryArrayAdapter
                 = new ArrayAdapter<ExpenseCategory>(view.getContext(),
-                        R.layout.adapter_expense_category);
+                        R.layout.adapter_expense_category_large);
         categoryArrayAdapter.addAll(categories);
         categoryList.setAdapter(categoryArrayAdapter);
 
