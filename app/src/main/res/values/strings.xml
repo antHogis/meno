@@ -16,5 +16,9 @@
     <string name="toast_expense_add_failure_invalid_date">Invalid date! Use calendar selection or format as YYYY:MM:DD</string>
     <string name="toast_expense_add_failure_invalid_category">Invalid category! Please select from dropdown</string>
 
+    <string name="table_header_category">Category</string>
+    <string name="table_header_cost">Cost</string>
+    <string name="table_header_date">Date</string>
+
     <string name="id_date_picker">date_picker</string>
 </resources>
