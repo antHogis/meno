@@ -9,6 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import de.codecrafters.tableview.TableView;
+import de.codecrafters.tableview.toolkit.SimpleTableDataAdapter;
+
 public class ExpenseListFragment extends Fragment {
 
     @Override
@@ -26,6 +29,12 @@ public class ExpenseListFragment extends Fragment {
         for (Expense expense : databaseHelper.findAllExpenses()) {
             Log.d("MENO-DEBUG", expense.toString());
         }
+
+        final String[][] DATA_TO_SHOW = { { "This", "is", "a", "test" },
+                { "and", "a", "second", "test" } };
+
+        TableView<String[]> testTable = (TableView<String[]>) view.findViewById(R.id.expenseTableView);
+        testTable.setDataAdapter(new SimpleTableDataAdapter(view.getContext(), DATA_TO_SHOW));
 
         return view;
     }
