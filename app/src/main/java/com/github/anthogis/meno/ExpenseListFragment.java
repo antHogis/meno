@@ -9,10 +9,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.List;
+
 import de.codecrafters.tableview.TableView;
 import de.codecrafters.tableview.toolkit.SimpleTableDataAdapter;
 
 public class ExpenseListFragment extends Fragment {
+
+    private TableView<Expense> expenseTable;
+    private List<Expense> expenseList;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,11 +35,9 @@ public class ExpenseListFragment extends Fragment {
             Log.d("MENO-DEBUG", expense.toString());
         }
 
-        final String[][] DATA_TO_SHOW = { { "This", "is", "a", "test" },
-                { "and", "a", "second", "test" } };
-
-        TableView<String[]> testTable = (TableView<String[]>) view.findViewById(R.id.expenseTableView);
-        testTable.setDataAdapter(new SimpleTableDataAdapter(view.getContext(), DATA_TO_SHOW));
+        expenseList = new DatabaseHelper(view.getContext()).findAllExpenses();
+        expenseTable = (TableView<Expense>) view.findViewById(R.id.expenseTableView);
+        expenseTable.setDataAdapter(new ExpenseTableDataAdapter(view.getContext(), expenseList));
 
         return view;
     }
