@@ -7,4 +7,5 @@
     <color name="table_color_even">#FFFFFF</color>
     <color name="table_color_odd">#ececec</color>
     <color name="table_color_text">#181e17</color>
+    <color name="borderColor">#a7a7a7</color>
 </resources>
