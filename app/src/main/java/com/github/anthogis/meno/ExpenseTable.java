@@ -9,6 +9,7 @@ import java.util.List;
 
 import de.codecrafters.tableview.SortableTableView;
 import de.codecrafters.tableview.toolkit.SimpleTableHeaderAdapter;
+import de.codecrafters.tableview.toolkit.TableDataRowBackgroundProviders;
 
 public class ExpenseTable extends SortableTableView<Expense> {
     public ExpenseTable(final Context context) {
@@ -35,6 +36,11 @@ public class ExpenseTable extends SortableTableView<Expense> {
         setColumnComparator(0, this::expenseCategoryComparator);
         setColumnComparator(1, this::expenseCostComparator);
         setColumnComparator(2, this::expenseDateComparator);
+
+        final int rowColorEven = ContextCompat.getColor(getContext(), R.color.table_color_even);
+        final int rowColorOdd  = ContextCompat.getColor(getContext(), R.color.table_color_odd);
+        setDataRowBackgroundProvider(TableDataRowBackgroundProviders
+                .alternatingRowColors(rowColorEven, rowColorOdd));
     }
 
     private int expenseCategoryComparator(Expense e1,  Expense e2) {

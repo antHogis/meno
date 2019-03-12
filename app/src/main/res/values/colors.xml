@@ -3,5 +3,8 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#248442</color>
-    <color name="iceWhite">#d2e9e8</color>
+    <color name="iceWhite">#e9f7f6</color>
+    <color name="table_color_even">#FFFFFF</color>
+    <color name="table_color_odd">#ececec</color>
+    <color name="table_color_text">#181e17</color>
 </resources>

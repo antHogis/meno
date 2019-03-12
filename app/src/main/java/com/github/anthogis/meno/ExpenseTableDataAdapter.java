@@ -1,6 +1,7 @@
 package com.github.anthogis.meno;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -36,6 +37,7 @@ public class ExpenseTableDataAdapter extends TableDataAdapter<Expense> {
 
         renderedView.setText(text);
         renderedView.setTextSize(TEXT_SIZE);
+        renderedView.setTextColor(ContextCompat.getColor(getContext(), R.color.table_color_text));
 
         return renderedView;
     }
