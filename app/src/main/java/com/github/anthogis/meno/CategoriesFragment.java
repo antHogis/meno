@@ -19,6 +19,9 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.github.anthogis.meno.statefulbutton.ButtonState;
+import com.github.anthogis.meno.statefulbutton.StatefulButton;
+
 public class CategoriesFragment extends Fragment {
 
     private DatabaseHelper databaseHelper;
@@ -90,7 +93,7 @@ public class CategoriesFragment extends Fragment {
 
     public static class EditCategoryDialog extends AppCompatDialogFragment {
         private static String categoryName;
-        private static Button executeEditButton;
+        private static StatefulButton executeEditButton;
         @Nullable
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -104,38 +107,47 @@ public class CategoriesFragment extends Fragment {
 
             EditText renameCategoryField = (EditText) view.findViewById(R.id.renameCategoryText);
             Button cancelButton = (Button) view.findViewById(R.id.dialog_edit_category_cancel);
-            executeEditButton = (Button) view.findViewById(R.id.dialog_edit_category_execute);
+            executeEditButton = (StatefulButton) view.findViewById(R.id.dialog_edit_category_execute);
 
             categoryName = getArguments().getString("CategoryName");
             renameCategoryField.setText(categoryName);
             renameCategoryField.addTextChangedListener(new DialogTextWatcher());
 
             cancelButton.setOnClickListener((v) -> dismiss());
-            executeEditButton.setOnClickListener((v) -> dismiss());
+            executeEditButton.setOnClickListener(this::onExecuteEdit);
+        }
 
+        private void onExecuteEdit(View view) {
+            String toastMessage;
+
+            if (executeEditButton.getState().equals(ButtonState.DELETE)) {
+                toastMessage = "Category deleted";
+                dismiss();
+            } else {
+                toastMessage = "Category renamed";
+                dismiss();
+            }
+
+            Toast.makeText(getContext(), toastMessage, Toast.LENGTH_SHORT).show();
         }
 
         private static class DialogTextWatcher implements TextWatcher {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 String text = s.toString();
 
                 if (text.equals(categoryName) || text.equals("")) {
-                    executeEditButton.setText(R.string.button_delete);
+                    executeEditButton.setState(ButtonState.DELETE);
                 } else {
-                    executeEditButton.setText(R.string.button_rename);
+                    executeEditButton.setState(ButtonState.RENAME);
                 }
             }
 
             @Override
-            public void afterTextChanged(Editable s) {
-
-            }
+            public void afterTextChanged(Editable s) {}
         }
     }
 }

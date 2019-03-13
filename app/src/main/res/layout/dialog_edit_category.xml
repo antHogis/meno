@@ -23,7 +23,7 @@
             android:layout_weight="0.5"
             android:text="@string/button_cancel" />
 
-        <Button
+        <com.github.anthogis.meno.statefulbutton.StatefulButton
             android:id="@+id/dialog_edit_category_execute"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
