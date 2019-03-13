@@ -5,10 +5,16 @@
     <string name="title_categories">Categories</string>
     <string name="title_expense_list">Expenses</string>
     <string name="title_charts">Charts</string>
+    <string name="title_rename_delete_category">Rename or delete?</string>
 
     <string name="hint_category">Category</string>
     <string name="hint_cost">Cost</string>
     <string name="hint_date">Date (Default: today)</string>
+    <string name="hint_rename_category">Rename category</string>
+
+    <string name="button_cancel">Cancel</string>
+    <string name="button_rename">Rename</string>
+    <string name="button_delete">Delete</string>
 
     <string name="toast_expense_add_success">Expense added successfully.</string>
     <string name="toast_expense_add_failure_empty_fields">Some fields are empty!</string>

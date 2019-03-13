@@ -157,7 +157,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @return the categories from the database.
      */
     public List<ExpenseCategory> findAllCategories() {
-        String sortOrder = CategoryTable.COL_NAME.name + " DESC";
+        String sortOrder = CategoryTable.COL_NAME.name + " ASC";
 
         Cursor cursor = getReadableDatabase().query(
                 CategoryTable.TABLE_NAME,
