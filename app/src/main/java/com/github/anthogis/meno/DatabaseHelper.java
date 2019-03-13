@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.provider.BaseColumns;
 import android.widget.Toast;
 
 import java.math.BigDecimal;
@@ -28,7 +27,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void add(ExpenseCategory category) throws SQLException {
         if (!categoryExistsIgnoreCase(category)) {
             ContentValues values = new ContentValues();
-            values.put(CategoryTable.COL_NAME, category.getName());
+            values.put(CategoryTable.COL_NAME.name, category.getName());
             getWritableDatabase().insertOrThrow(CategoryTable.TABLE_NAME,null, values);
         } else {
             throw new SQLException();
@@ -39,9 +38,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         int categoryId = findCategoryIdByName(expense.getCategory().getName());
 
         ContentValues values = new ContentValues();
-        values.put(ExpenseTable.COL_CATEGORY, categoryId);
-        values.put(ExpenseTable.COL_COST, expense.getCost().toString());
-        values.put(ExpenseTable.COL_DATE, DateHelper.stringOf(expense.getDate()));
+        values.put(ExpenseTable.COL_CATEGORY.name, categoryId);
+        values.put(ExpenseTable.COL_COST.name, expense.getCost().toString());
+        values.put(ExpenseTable.COL_DATE.name, DateHelper.stringOf(expense.getDate()));
 
         getWritableDatabase().insertOrThrow(ExpenseTable.TABLE_NAME,null, values);
     }
@@ -52,7 +51,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public List<Expense> findAllExpenses() {
-        String sortOrder = ExpenseTable.COL_DATE + " DESC";
+        String sortOrder = ExpenseTable.COL_DATE.name + " DESC";
 
         Cursor cursor = getReadableDatabase().query(
                 ExpenseTable.TABLE_NAME,
@@ -74,9 +73,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         try {
             while (cursor.moveToNext()) {
-                int categoryIndex = cursor.getColumnIndexOrThrow(ExpenseTable.COL_CATEGORY);
-                int costIndex = cursor.getColumnIndexOrThrow(ExpenseTable.COL_COST);
-                int dateIndex = cursor.getColumnIndexOrThrow(ExpenseTable.COL_DATE);
+                int categoryIndex = cursor.getColumnIndexOrThrow(ExpenseTable.COL_CATEGORY.name);
+                int costIndex = cursor.getColumnIndexOrThrow(ExpenseTable.COL_COST.name);
+                int dateIndex = cursor.getColumnIndexOrThrow(ExpenseTable.COL_DATE.name);
 
                 String categoryString = findCategoryNameById(cursor.getInt(categoryIndex));
                 String costString = cursor.getString(costIndex);
@@ -100,7 +99,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public List<ExpenseCategory> findAllCategories() {
-        String sortOrder = CategoryTable.COL_NAME + " DESC";
+        String sortOrder = CategoryTable.COL_NAME.name + " DESC";
 
         Cursor cursor = getReadableDatabase().query(
                 CategoryTable.TABLE_NAME,
@@ -115,7 +114,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<ExpenseCategory> categories = new ArrayList<>(cursor.getCount());
 
         while(cursor.moveToNext()) {
-            int index = cursor.getColumnIndex(CategoryTable.COL_NAME);
+            int index = cursor.getColumnIndex(CategoryTable.COL_NAME.name);
             categories.add(new ExpenseCategory(cursor.getString(index)));
         }
         cursor.close();
@@ -125,8 +124,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public int findCategoryIdByName(String name) throws SQLException {
         int id = -1;
-        String[] columns = {CategoryTable._ID, CategoryTable.COL_NAME};
-        String selection = CategoryTable.COL_NAME + "= ?";
+        String[] columns = {CategoryTable._ID.name, CategoryTable.COL_NAME.name};
+        String selection = CategoryTable.COL_NAME.name + "= ?";
         String[] selectionArgs = {name};
 
         Cursor cursor = getReadableDatabase().query(
@@ -140,7 +139,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         );
 
         while (cursor.moveToNext()) {
-            id = cursor.getInt(cursor.getColumnIndexOrThrow(CategoryTable._ID));
+            id = cursor.getInt(cursor.getColumnIndexOrThrow(CategoryTable._ID.name));
         }
         cursor.close();
 
@@ -150,8 +149,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public String findCategoryNameById(int id) throws SQLException {
         String name = null;
 
-        String[] columns = {CategoryTable._ID, CategoryTable.COL_NAME};
-        String selection = CategoryTable._ID + "= ?";
+        String[] columns = {CategoryTable._ID.name, CategoryTable.COL_NAME.name};
+        String selection = CategoryTable._ID.name + "= ?";
         String[] selectionArgs = {"" + id};
 
         Cursor cursor = getReadableDatabase().query(
@@ -165,7 +164,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         );
 
         while (cursor.moveToNext()) {
-            name = cursor.getString(cursor.getColumnIndexOrThrow(CategoryTable.COL_NAME));
+            name = cursor.getString(cursor.getColumnIndexOrThrow(CategoryTable.COL_NAME.name));
         }
         cursor.close();
 
@@ -203,18 +202,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private static String createExpenseTableSql() {
+        ExpenseTable _ID = ExpenseTable._ID;
+        ExpenseTable CATEGORY = ExpenseTable.COL_CATEGORY;
+        ExpenseTable COST = ExpenseTable.COL_COST;
+        ExpenseTable DATE = ExpenseTable.COL_DATE;
+
         return new StringBuilder()
-                .append("CREATE TABLE ")
-                .append(ExpenseTable.TABLE_NAME).append(" (")
-                .append(ExpenseTable._ID).append(" INTEGER PRIMARY KEY AUTOINCREMENT,")
-                .append(ExpenseTable.COL_CATEGORY).append(" INTEGER,")
-                .append(ExpenseTable.COL_COST).append(" TEXT,")
-                .append(ExpenseTable.COL_DATE).append(" TEXT,")
-                .append("FOREIGN KEY(").append(ExpenseTable.COL_CATEGORY).append(')')
-                .append(" REFERENCES ").append(CategoryTable.TABLE_NAME)
-                .append('(').append(CategoryTable._ID).append(')')
+                .append("CREATE TABLE ").append(ExpenseTable.TABLE_NAME).append(" (")
+                    .append(_ID.name).append(' ').append(_ID.dataType).append(',')
+                    .append(CATEGORY.name).append(' ').append(CATEGORY.dataType).append(',')
+                    .append(COST.name).append(' ').append(COST.dataType).append(',')
+                    .append(DATE.name).append(' ').append(DATE.dataType).append(',')
+                    .append("FOREIGN KEY(").append(CATEGORY.name).append(')')
+                    .append(" REFERENCES ").append(CategoryTable.TABLE_NAME)
+                    .append('(').append(CategoryTable._ID.name).append(')')
                 .append(')')
-                .toString();
+            .toString();
     }
 
     private static String dropExpenseTableSql() {
@@ -222,28 +225,52 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private static String createExpenseCategoryTableSql() {
+        CategoryTable _ID = CategoryTable._ID;
+        CategoryTable COL_NAME = CategoryTable.COL_NAME;
+
         return new StringBuilder()
                 .append("CREATE TABLE ")
-                .append(CategoryTable.TABLE_NAME).append(" (")
-                .append(CategoryTable._ID).append(" INTEGER PRIMARY KEY AUTOINCREMENT,")
-                .append(CategoryTable.COL_NAME).append(" TEXT UNIQUE")
+                    .append(CategoryTable.TABLE_NAME).append(" (")
+                    .append(_ID.name).append(' ').append(_ID.dataType).append(',')
+                    .append(COL_NAME.name).append(' ').append(COL_NAME.dataType)
                 .append(')')
-                .toString();
+            .toString();
     }
 
     private static String dropExpenseCategoryTableSql() {
         return "DROP TABLE IF EXISTS " + CategoryTable.TABLE_NAME;
     }
 
-    private static final class ExpenseTable implements BaseColumns {
-        public static final String TABLE_NAME = "expenses";
-        public static final String COL_CATEGORY = "category";
-        public static final String COL_COST = "cost";
-        public static final String COL_DATE = "date";
+
+    private enum ExpenseTable {
+        _ID("_id", "INTEGER PRIMARY KEY AUTOINCREMENT"),
+        COL_CATEGORY("category","INTEGER"),
+        COL_COST("cost","TEXT"),
+        COL_DATE("date","TEXT")
+        ;
+
+        final static String TABLE_NAME = "expenses";
+        String name;
+        String dataType;
+
+        ExpenseTable(String name, String dataType) {
+            this.name = name;
+            this.dataType = dataType;
+        }
     }
 
-    private static final class CategoryTable implements BaseColumns {
-        public static final String TABLE_NAME = "categories";
-        public static final String COL_NAME = "name";
+    private enum CategoryTable {
+        _ID("_id", "INTEGER PRIMARY KEY AUTOINCREMENT"),
+        COL_NAME("name", "TEXT UNIQUE"),
+        COL_DELETED("indexable", "INTEGER");
+
+        final static String TABLE_NAME = "categories";
+        String name;
+        String dataType;
+
+        CategoryTable(String name, String dataType) {
+            this.name = name;
+            this.dataType = dataType;
+        }
     }
 }
