@@ -18,4 +18,8 @@ public enum ButtonState {
     public String getText() {
         return text;
     }
+
+    public boolean equals(ButtonState other) {
+        return this.text.equals(other.text);
+    }
 }
