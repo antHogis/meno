@@ -7,9 +7,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.provider.BaseColumns;
-import android.util.Log;
-import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import java.math.BigDecimal;
@@ -20,18 +17,22 @@ import java.util.List;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "MenoApp.db";
-    private static final int DATABASE_VESION = 1;
+    private static final int DATABASE_VERSION = 1;
     private Context context;
 
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VESION);
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
     }
 
     public void add(ExpenseCategory category) throws SQLException {
-        ContentValues values = new ContentValues();
-        values.put(CategoryTable.COL_NAME, category.getName());
-        getWritableDatabase().insertOrThrow(CategoryTable.TABLE_NAME,null, values);
+        if (!categoryExistsIgnoreCase(category)) {
+            ContentValues values = new ContentValues();
+            values.put(CategoryTable.COL_NAME, category.getName());
+            getWritableDatabase().insertOrThrow(CategoryTable.TABLE_NAME,null, values);
+        } else {
+            throw new SQLException();
+        }
     }
 
     public void add(Expense expense) throws SQLException {
@@ -43,6 +44,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(ExpenseTable.COL_DATE, DateHelper.stringOf(expense.getDate()));
 
         getWritableDatabase().insertOrThrow(ExpenseTable.TABLE_NAME,null, values);
+    }
+
+    public void deleteAllTableValues() {
+        getWritableDatabase().delete(ExpenseTable.TABLE_NAME, null, null);
+        getWritableDatabase().delete(CategoryTable.TABLE_NAME, null, null);
     }
 
     public List<Expense> findAllExpenses() {
@@ -83,7 +89,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 expenses.add(new Expense(category, cost, date));
             }
         } catch (SQLException | ParseException e) {
-            Toast.makeText(context, "Could not retrieve expenses", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context,
+                    context.getResources().getString(R.string.toast_expense_get_failure),
+                    Toast.LENGTH_SHORT).show();
         } finally {
             cursor.close();
         }
@@ -92,7 +100,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     public List<ExpenseCategory> findAllCategories() {
-        String sortOrder = CategoryTable.COL_NAME + " ASC";
+        String sortOrder = CategoryTable.COL_NAME + " DESC";
 
         Cursor cursor = getReadableDatabase().query(
                 CategoryTable.TABLE_NAME,
@@ -162,6 +170,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
 
         return name;
+    }
+
+    public boolean categoryExistsIgnoreCase(ExpenseCategory category) {
+        boolean exists = false;
+
+        for (ExpenseCategory _category : findAllCategories()) {
+            if (category.getName().equalsIgnoreCase(_category.getName())) {
+                exists = true;
+            }
+        }
+
+        return exists;
     }
 
     @Override

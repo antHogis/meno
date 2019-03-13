@@ -15,6 +15,10 @@
     <string name="toast_expense_add_failure_invalid_cost">Invalid cost!</string>
     <string name="toast_expense_add_failure_invalid_date">Invalid date! Use calendar selection or format as YYYY:MM:DD</string>
     <string name="toast_expense_add_failure_invalid_category">Invalid category! Please select from dropdown</string>
+    <string name="toast_category_add_success">Category added successfully</string>
+    <string name="toast_category_add_failure_duplicate">Category already exists!</string>
+    <string name="toast_category_add_failure_empty">Category field is empty!</string>
+    <string name="toast_expense_get_failure">Could not retrieve expenses.</string>
 
     <string name="table_header_category">Category</string>
     <string name="table_header_cost">Cost</string>

@@ -49,16 +49,24 @@ public class CategoriesFragment extends Fragment {
 
     private void onAddCategory(View view) {
         String categoryName = addCategoryField.getText().toString();
+        String toastMessage;
+
         if (!categoryName.equals("")) {
             try {
                 databaseHelper.add(new ExpenseCategory(categoryName));
-                Toast.makeText(view.getContext(), "Category added successfully", Toast.LENGTH_SHORT).show();
+                categoryArrayAdapter.clear();
+                categoryArrayAdapter.addAll(databaseHelper.findAllCategories());
+
+                toastMessage =  getString(R.string.toast_category_add_success);
             } catch (SQLException e) {
-                Toast.makeText(view.getContext(), "Category already exists!", Toast.LENGTH_SHORT).show();
+                toastMessage = getString(R.string.toast_category_add_failure_duplicate);
             }
+        } else {
+            toastMessage = getString(R.string.toast_category_add_failure_empty);
         }
 
-        categoryArrayAdapter.clear();
-        categoryArrayAdapter.addAll(databaseHelper.findAllCategories());
+        Toast.makeText(view.getContext(),
+                toastMessage,
+                Toast.LENGTH_SHORT).show();
     }
 }
