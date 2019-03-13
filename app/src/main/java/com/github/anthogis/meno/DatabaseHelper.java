@@ -14,9 +14,28 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * DatabaseHelper is a helper class to access an SQLite database.
+ *
+ * @author antHogis
+ * @version 1.0
+ * @since 1.0
+ */
 public class DatabaseHelper extends SQLiteOpenHelper {
+
+    /**
+     * The name of the database used.
+     */
     private static final String DATABASE_NAME = "MenoApp.db";
+
+    /**
+     * The current version of the database used.
+     */
     private static final int DATABASE_VERSION = 1;
+
+    /**
+     * The context where this class is instantiated.
+     */
     private Context context;
 
     public DatabaseHelper(Context context) {
@@ -24,6 +43,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         this.context = context;
     }
 
+    /**
+     * Adds a category to a table in the database, if it does not already exist.
+     *
+     * Adds a category to a table by the name specified in inner enum
+     * CategoryTable.TABLE_NAME, which exists in the database. Only adds
+     * the name of the category to the table, if the table doesn't already
+     * include a category of the same name, regardless of the case of the name.
+     *
+     * @param category the category to add to the table in the database.
+     * @throws SQLException if a category by the same name already exists in the table.
+     */
     public void add(ExpenseCategory category) throws SQLException {
         if (!categoryExistsIgnoreCase(category)) {
             ContentValues values = new ContentValues();
@@ -34,6 +64,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Adds an expense to a table in the database.
+     *
+     * Adds an expense to table by the name specified in inner enum
+     * ExpenseTable.TABLE_NAME, which exists in the database. Attributes
+     * a foreign key to the id of the category to the expense.
+     *
+     * @param expense the expense to add to the table in the database.
+     * @throws SQLException if the expense could not be added, or if the name
+     * of the category in the expense could not be found from the table of categories.
+     */
     public void add(Expense expense) throws SQLException {
         int categoryId = findCategoryIdByName(expense.getCategory().getName());
 
@@ -45,11 +86,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         getWritableDatabase().insertOrThrow(ExpenseTable.TABLE_NAME,null, values);
     }
 
+    /**
+     * Convenience method to delete all values in all tables of the database.
+     */
     public void deleteAllTableValues() {
         getWritableDatabase().delete(ExpenseTable.TABLE_NAME, null, null);
         getWritableDatabase().delete(CategoryTable.TABLE_NAME, null, null);
     }
 
+    /**
+     * Retrieves all expenses from the table of expenses in the database.
+     *
+     * Retrieves all expenses from the table of expenses in the database,
+     * arranged descending by date. Displays a Toast in the context of
+     * the instantiation of this class if an expense could not be retrieved
+     * from the table.
+     *
+     * @return the expenses from the database.
+     */
     public List<Expense> findAllExpenses() {
         String sortOrder = ExpenseTable.COL_DATE.name + " DESC";
 
@@ -71,8 +125,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             expenses = new ArrayList<>(0);
         }
 
-        try {
-            while (cursor.moveToNext()) {
+        while (cursor.moveToNext()) {
+            try {
                 int categoryIndex = cursor.getColumnIndexOrThrow(ExpenseTable.COL_CATEGORY.name);
                 int costIndex = cursor.getColumnIndexOrThrow(ExpenseTable.COL_COST.name);
                 int dateIndex = cursor.getColumnIndexOrThrow(ExpenseTable.COL_DATE.name);
@@ -86,18 +140,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 Date date = DateHelper.parse(dateString);
 
                 expenses.add(new Expense(category, cost, date));
+            } catch (SQLException | ParseException e) {
+                Toast.makeText(context,
+                        context.getResources().getString(R.string.toast_expense_get_failure),
+                        Toast.LENGTH_SHORT).show();
             }
-        } catch (SQLException | ParseException e) {
-            Toast.makeText(context,
-                    context.getResources().getString(R.string.toast_expense_get_failure),
-                    Toast.LENGTH_SHORT).show();
-        } finally {
-            cursor.close();
         }
+            cursor.close();
 
         return expenses;
     }
 
+    /**
+     * Retrieves all categories form the table of categories in the database.
+     *
+     * @return the categories from the database.
+     */
     public List<ExpenseCategory> findAllCategories() {
         String sortOrder = CategoryTable.COL_NAME.name + " DESC";
 
@@ -122,7 +180,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return categories;
     }
 
-    public int findCategoryIdByName(String name) throws SQLException {
+    /**
+     * Retrieves the ID of a category from the table of categories.
+     *
+     * @param name the name of the category, of which the ID in the table is retrieved.
+     * @return -1 if an ID could not be found for the category, else the ID of the category.
+     * @throws SQLException if the column ID could not be found in the table, or if a
+     * category could not be found by the name provided.
+     */
+    private int findCategoryIdByName(String name) throws SQLException {
         int id = -1;
         String[] columns = {CategoryTable._ID.name, CategoryTable.COL_NAME.name};
         String selection = CategoryTable.COL_NAME.name + "= ?";
@@ -143,10 +209,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         cursor.close();
 
+        if (id == -1) {
+            throw new SQLException();
+        }
+
         return id;
     }
 
-    public String findCategoryNameById(int id) throws SQLException {
+    /**
+     * Retrieves the name of a category by ID, from the table of categories.
+     *
+     * @param id the id of the category to retrieve.
+     * @return the name of the category.
+     * @throws SQLException if the column name could not be found in the table, or if a
+     * category could not be found by the id provided.
+     */
+    private String findCategoryNameById(int id) throws SQLException {
         String name = null;
 
         String[] columns = {CategoryTable._ID.name, CategoryTable.COL_NAME.name};
@@ -168,10 +246,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         cursor.close();
 
+        if (name == null) {
+            throw new SQLException();
+        }
+
         return name;
     }
 
-    public boolean categoryExistsIgnoreCase(ExpenseCategory category) {
+    /**
+     * Checks if a given category already exists in the table of categories,
+     * regardless of the case of the name.
+     *
+     * @param category the category which is looked for in the table of categories.
+     * @return true if a category by the same name exists, regardless of case, false
+     * if a category by the same name does not exist
+     */
+    private boolean categoryExistsIgnoreCase(ExpenseCategory category) {
         boolean exists = false;
 
         for (ExpenseCategory _category : findAllCategories()) {
@@ -183,12 +273,29 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return exists;
     }
 
+    /**
+     * Lifecycle method of super class SQLiteOpenHelper.
+     *
+     * Lifecycle method of super class SQLiteOpenHelper, called when
+     * the database is created for the first time
+     * @param db the database to create.
+     */
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(createExpenseCategoryTableSql());
         db.execSQL(createExpenseTableSql());
     }
 
+    /**
+     * Lifecycle method of super class SQLiteOpenHelper.
+     *
+     * Lifecycle method of super class SQLiteOpenHelper. called when
+     * the database needs to be upgraded.
+     *
+     * @param db the database.
+     * @param oldVersion the old database version.
+     * @param newVersion the new database version.
+     */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL(dropExpenseTableSql());
@@ -196,11 +303,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+    /**
+     * Lifecycle method of super class SQLiteOpenHelper.
+     *
+     * Lifecycle method of super class SQLiteOpenHelper. called when
+     * the database needs to be downgraded.
+     *
+     * @param db the database.
+     * @param oldVersion the old database version.
+     * @param newVersion the new database version.
+     */
     @Override
     public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         onUpgrade(db, oldVersion, newVersion);
     }
 
+    /**
+     * Creates SQL statement string for creating table of expenses.
+     *
+     * @return the SQL statement String
+     */
     private static String createExpenseTableSql() {
         ExpenseTable _ID = ExpenseTable._ID;
         ExpenseTable CATEGORY = ExpenseTable.COL_CATEGORY;
@@ -220,10 +342,20 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             .toString();
     }
 
+    /**
+     * Creates SQL statement string for dropping table of expenses.
+     *
+     * @return the SQL statement String
+     */
     private static String dropExpenseTableSql() {
         return "DROP TABLE IF EXISTS " + ExpenseTable.TABLE_NAME;
     }
 
+    /**
+     * Creates SQL statement string for creating table of categories.
+     *
+     * @return the SQL statement String
+     */
     private static String createExpenseCategoryTableSql() {
         CategoryTable _ID = CategoryTable._ID;
         CategoryTable COL_NAME = CategoryTable.COL_NAME;
@@ -237,11 +369,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             .toString();
     }
 
+    /**
+     * Creates SQL statement string for dropping table of categories.
+     *
+     * @return the SQL statement String
+     */
     private static String dropExpenseCategoryTableSql() {
         return "DROP TABLE IF EXISTS " + CategoryTable.TABLE_NAME;
     }
 
-
+    /**
+     * Contains values for defining a table of expenses in the database.
+     */
     private enum ExpenseTable {
         _ID("_id", "INTEGER PRIMARY KEY AUTOINCREMENT"),
         COL_CATEGORY("category","INTEGER"),
@@ -259,10 +398,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Contains values for defining a table of ExpenseCategories in the database.
+     */
     private enum CategoryTable {
         _ID("_id", "INTEGER PRIMARY KEY AUTOINCREMENT"),
         COL_NAME("name", "TEXT UNIQUE"),
-        COL_DELETED("indexable", "INTEGER");
+        COL_DELETED("deleted", "INTEGER");
 
         final static String TABLE_NAME = "categories";
         String name;

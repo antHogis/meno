@@ -18,7 +18,7 @@
     <string name="toast_category_add_success">Category added successfully</string>
     <string name="toast_category_add_failure_duplicate">Category already exists!</string>
     <string name="toast_category_add_failure_empty">Category field is empty!</string>
-    <string name="toast_expense_get_failure">Could not retrieve expenses.</string>
+    <string name="toast_expense_get_failure">Could not retrieve all expenses.</string>
 
     <string name="table_header_category">Category</string>
     <string name="table_header_cost">Cost</string>
