@@ -18,6 +18,9 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.github.anthogis.meno.exceptions.EmptyFieldException;
+import com.github.anthogis.meno.exceptions.InvalidCategoryException;
+
 import java.math.BigDecimal;
 
 import java.text.ParseException;
