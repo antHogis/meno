@@ -1,4 +1,4 @@
-package com.github.anthogis.meno.statefulbutton;
+package com.github.anthogis.meno.views;
 
 import android.content.Context;
 import android.support.v7.widget.AppCompatButton;

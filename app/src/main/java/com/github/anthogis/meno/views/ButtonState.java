@@ -1,4 +1,4 @@
-package com.github.anthogis.meno.statefulbutton;
+package com.github.anthogis.meno.views;
 
 public enum ButtonState {
     DELETE("Delete"),

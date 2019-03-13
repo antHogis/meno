@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatDialogFragment;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +18,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.github.anthogis.meno.statefulbutton.ButtonState;
-import com.github.anthogis.meno.statefulbutton.StatefulButton;
+import com.github.anthogis.meno.views.ButtonState;
+import com.github.anthogis.meno.views.StatefulButton;
 
 public class CategoriesFragment extends Fragment {
 
