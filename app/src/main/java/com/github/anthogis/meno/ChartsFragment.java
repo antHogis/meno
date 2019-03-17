@@ -8,7 +8,21 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import lecho.lib.hellocharts.model.PieChartData;
+import lecho.lib.hellocharts.model.SliceValue;
+import lecho.lib.hellocharts.view.PieChartView;
+
 public class ChartsFragment extends Fragment {
+    private DatabaseHelper databaseHelper;
+    private PieChartView pieChartView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -19,6 +33,50 @@ public class ChartsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_charts, container, false);
+        View view = inflater.inflate(R.layout.fragment_charts, container, false);
+        databaseHelper = ((MainActivity) getActivity()).getDatabaseHelper();
+        pieChartView = view.findViewById(R.id.chart);
+        pieChartView.setPieChartData(createPieCharData());
+        return view;
+    }
+
+    private PieChartData createPieCharData() {
+        List<Expense> expenses = databaseHelper.findAllExpenses();
+        List<ExpenseCategory> categories = databaseHelper.findAllCategories();
+        Map<String, BigDecimal> categorySums = new HashMap<>(categories.size());
+
+        for (ExpenseCategory category : categories) {
+            categorySums.put(category.getName(), new BigDecimal(BigInteger.ZERO));
+        }
+
+        for (String categoryName : categorySums.keySet()) {
+            for (Expense expense : expenses) {
+                if (expense.getCategory().getName().equals(categoryName)) {
+                    categorySums.put(
+                            categoryName, categorySums.get(categoryName).add(expense.getCost()));
+                }
+            }
+        }
+
+        List<String> removableCategories = new ArrayList<>();
+
+        for (String categoryName : categorySums.keySet()) {
+            if (categorySums.get(categoryName).equals(BigDecimal.ZERO)) {
+                removableCategories.add(categoryName);
+            }
+        }
+
+        for (String removableCategory : removableCategories) {
+            categorySums.remove(removableCategory);
+        }
+
+        List<SliceValue> rawPieData = new ArrayList<>(categorySums.size());
+
+        for (String categoryName : categorySums.keySet()) {
+            rawPieData.add(new SliceValue(
+                    categorySums.get(categoryName).floatValue()).setLabel(categoryName));
+        }
+
+        return new PieChartData(rawPieData).setHasLabels(true);
     }
 }
