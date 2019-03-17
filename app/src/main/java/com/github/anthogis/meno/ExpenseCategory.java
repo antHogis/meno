@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 public class ExpenseCategory implements Serializable {
     private String name;
+    private int id;
+    private boolean deleted;
 
     public ExpenseCategory() {
     }
@@ -18,6 +20,22 @@ public class ExpenseCategory implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 
     @Override

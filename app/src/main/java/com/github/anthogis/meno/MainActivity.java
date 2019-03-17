@@ -11,6 +11,7 @@ import java.util.Optional;
 
 public class MainActivity extends AppCompatActivity {
 
+    private DatabaseHelper databaseHelper;
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -53,6 +54,11 @@ public class MainActivity extends AppCompatActivity {
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(navListener);
+
+        databaseHelper = new DatabaseHelper(this);
     }
 
+    public DatabaseHelper getDatabaseHelper() {
+        return databaseHelper;
+    }
 }

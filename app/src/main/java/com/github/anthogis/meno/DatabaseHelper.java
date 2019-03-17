@@ -9,6 +9,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.github.anthogis.meno.exceptions.CategoryReferencedException;
+
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -59,7 +61,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (!categoryExistsIgnoreCase(category)) {
             ContentValues values = new ContentValues();
             values.put(CategoryTable.COL_NAME.name, category.getName());
-            values.put(CategoryTable.COL_DELETED.name, 0);
             getWritableDatabase().insertOrThrow(CategoryTable.TABLE_NAME,null, values);
         } else {
             throw new SQLException();
@@ -100,11 +101,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * Deletes a category.
      *
      * Deletes a category if no expense in the table of expenses
-     * has a reference to it's ID. Otherwise the category is
-     * only marked as deleted, but remains in the table.
+     * has a reference to it's ID. Otherwise an exception is thrown.
+     *
+     * @param category the category to delete.
+     * @throws CategoryReferencedException if the category is referenced in the table of expenses.
      */
-    public void deleteCategory(ExpenseCategory category) {
-        boolean referenced = false;
+    public void deleteCategory(ExpenseCategory category) throws CategoryReferencedException {
         Cursor cursor;
 
         //Find id of category
@@ -112,8 +114,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         //Find all expenses with reference to category id
         String[] columns = {ExpenseTable.COL_CATEGORY.name};
+        String selection = ExpenseTable.COL_CATEGORY.name + "= ?";
         String[] selectionArgs = {"" + categoryId};
-        String selection = ExpenseTable.COL_CATEGORY + "= ?";
         cursor = getReadableDatabase().query(
                 ExpenseTable.TABLE_NAME,
                 columns,
@@ -124,8 +126,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 null
         );
 
-        Log.d("DEBUG", "Count: " + cursor.getCount());
+        boolean categoryReferenced = cursor.getCount() > 0;
         cursor.close();
+
+        if (categoryReferenced) {
+            throw new CategoryReferencedException();
+        } else {
+            String whereClause = CategoryTable._ID.name + "= ?";
+            String[] whereArgs = {"" + categoryId};
+            getWritableDatabase().delete(
+                    CategoryTable.TABLE_NAME,
+                    whereClause,
+                    whereArgs);
+        }
     }
 
     /**
@@ -207,8 +220,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<ExpenseCategory> categories = new ArrayList<>(cursor.getCount());
 
         while(cursor.moveToNext()) {
-            int index = cursor.getColumnIndex(CategoryTable.COL_NAME.name);
-            categories.add(new ExpenseCategory(cursor.getString(index)));
+            int nameIndex = cursor.getColumnIndex(CategoryTable.COL_NAME.name);
+
+            ExpenseCategory category = new ExpenseCategory();
+            category.setName(cursor.getString(nameIndex));
+            categories.add(category);
         }
         cursor.close();
 
@@ -394,13 +410,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static String createExpenseCategoryTableSql() {
         CategoryTable _ID = CategoryTable._ID;
         CategoryTable COL_NAME = CategoryTable.COL_NAME;
-        CategoryTable COL_DELETED = CategoryTable.COL_DELETED;
 
         return new StringBuilder()
                 .append("CREATE TABLE ").append(CategoryTable.TABLE_NAME).append(" (")
                     .append(_ID.name).append(' ').append(_ID.dataType).append(',')
-                    .append(COL_NAME.name).append(' ').append(COL_NAME.dataType).append(',')
-                    .append(COL_DELETED.name).append(' ').append(COL_DELETED.dataType)
+                    .append(COL_NAME.name).append(' ').append(COL_NAME.dataType)
                 .append(')')
             .toString();
     }
@@ -439,8 +453,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     private enum CategoryTable {
         _ID("_id", "INTEGER PRIMARY KEY AUTOINCREMENT"),
-        COL_NAME("name", "TEXT UNIQUE"),
-        COL_DELETED("deleted", "INTEGER");
+        COL_NAME("name", "TEXT UNIQUE");
 
         final static String TABLE_NAME = "categories";
         String name;

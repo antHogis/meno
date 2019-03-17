@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.github.anthogis.meno.exceptions.CategoryReferencedException;
 import com.github.anthogis.meno.views.ButtonState;
 import com.github.anthogis.meno.views.StatefulButton;
 
@@ -43,7 +44,7 @@ public class CategoriesFragment extends Fragment {
         addCategoryField = (EditText) view.findViewById(R.id.addNewCategoryText);
         Button addCategoryButton = (Button) view.findViewById(R.id.addCategoryButton);
 
-        databaseHelper = new DatabaseHelper(view.getContext());
+        databaseHelper = ((MainActivity) getActivity()).getDatabaseHelper();
         categoryArrayAdapter
                 = new ArrayAdapter<ExpenseCategory>(view.getContext(),
                         R.layout.adapter_expense_category_large);
@@ -84,6 +85,7 @@ public class CategoriesFragment extends Fragment {
         Bundle argBundle = new Bundle();
         argBundle.putString("CategoryName", categoryArrayAdapter.getItem(position).getName());
         dialog.setArguments(argBundle);
+        dialog.setTargetFragment(this, 0);
         dialog.show(getActivity().getSupportFragmentManager(), "foo_bar");
 
         return true;
@@ -95,7 +97,17 @@ public class CategoriesFragment extends Fragment {
     }
 
     private void deleteCategory(ExpenseCategory category) {
+        String toastMessage;
 
+        try {
+            databaseHelper.deleteCategory(category);
+            reloadAdapter();
+            toastMessage = "Category deleted";
+        } catch (CategoryReferencedException e) {
+            toastMessage = "Category could not be deleted";
+        }
+
+        Toast.makeText(getContext(), toastMessage, Toast.LENGTH_SHORT).show();
     }
 
     public static class EditCategoryDialog extends AppCompatDialogFragment {
@@ -125,18 +137,14 @@ public class CategoriesFragment extends Fragment {
         }
 
         private void onExecuteEdit(View view) {
-            String toastMessage;
-
             if (executeEditButton.getState().equals(ButtonState.DELETE)) {
-                toastMessage = "Category deleted";
-
+                CategoriesFragment target = ((CategoriesFragment) getTargetFragment());
+                target.deleteCategory(new ExpenseCategory(categoryName));
                 dismiss();
-            } else {
-                toastMessage = "Category renamed";
+            } else if(executeEditButton.getState().equals(ButtonState.RENAME))  {
                 dismiss();
             }
 
-            Toast.makeText(getContext(), toastMessage, Toast.LENGTH_SHORT).show();
         }
 
         private static class DialogTextWatcher implements TextWatcher {
