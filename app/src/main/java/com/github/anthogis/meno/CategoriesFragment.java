@@ -99,30 +99,36 @@ public class CategoriesFragment extends Fragment {
 
     private void deleteCategory(ExpenseCategory category) {
         String toastMessage;
+        int toastLength;
 
         try {
             databaseHelper.deleteCategory(category);
             reloadAdapter();
-            toastMessage = "Category deleted";
+            toastMessage = getString(R.string.toast_category_delete_success);
+            toastLength = Toast.LENGTH_SHORT;
         } catch (CategoryReferencedException e) {
-            toastMessage = "Category could not be deleted";
+            toastMessage = getString(R.string.toast_category_delete_failure_referenced);
+            toastLength = Toast.LENGTH_LONG;
         }
 
-        Toast.makeText(getContext(), toastMessage, Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), toastMessage, toastLength).show();
     }
 
     private void renameCategory(ExpenseCategory category, String newName) {
         String toastMessage;
+        int toastLength;
 
         try {
             databaseHelper.renameCategory(category, newName);
             reloadAdapter();
-            toastMessage = "Category renamed";
+            toastMessage = getString(R.string.toast_category_rename_success);
+            toastLength = Toast.LENGTH_SHORT;
         } catch (SimilarCategoryExistsException e) {
-            toastMessage = "Category could not be renamed";
+            toastMessage = getString(R.string.toast_category_rename_failure_duplicate);
+            toastLength = Toast.LENGTH_LONG;
         }
 
-        Toast.makeText(getContext(), toastMessage, Toast.LENGTH_LONG).show();
+        Toast.makeText(getContext(), toastMessage, toastLength).show();
     }
 
     public static class EditCategoryDialog extends AppCompatDialogFragment {
