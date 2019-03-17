@@ -59,6 +59,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (!categoryExistsIgnoreCase(category)) {
             ContentValues values = new ContentValues();
             values.put(CategoryTable.COL_NAME.name, category.getName());
+            values.put(CategoryTable.COL_DELETED.name, 0);
             getWritableDatabase().insertOrThrow(CategoryTable.TABLE_NAME,null, values);
         } else {
             throw new SQLException();
@@ -191,10 +192,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public List<ExpenseCategory> findAllCategories() {
         String sortOrder = CategoryTable.COL_NAME.name + " ASC";
+        String[] columns = {CategoryTable.COL_NAME.name};
 
         Cursor cursor = getReadableDatabase().query(
                 CategoryTable.TABLE_NAME,
-                null,
+                columns,
                 null,
                 null,
                 null,
@@ -370,7 +372,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     .append(DATE.name).append(' ').append(DATE.dataType).append(',')
                     .append("FOREIGN KEY(").append(CATEGORY.name).append(')')
                     .append(" REFERENCES ").append(CategoryTable.TABLE_NAME)
-                    .append('(').append(CategoryTable._ID.name).append(')')
+                        .append('(').append(CategoryTable._ID.name).append(')')
                 .append(')')
             .toString();
     }
@@ -392,12 +394,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static String createExpenseCategoryTableSql() {
         CategoryTable _ID = CategoryTable._ID;
         CategoryTable COL_NAME = CategoryTable.COL_NAME;
+        CategoryTable COL_DELETED = CategoryTable.COL_DELETED;
 
         return new StringBuilder()
-                .append("CREATE TABLE ")
-                    .append(CategoryTable.TABLE_NAME).append(" (")
+                .append("CREATE TABLE ").append(CategoryTable.TABLE_NAME).append(" (")
                     .append(_ID.name).append(' ').append(_ID.dataType).append(',')
-                    .append(COL_NAME.name).append(' ').append(COL_NAME.dataType)
+                    .append(COL_NAME.name).append(' ').append(COL_NAME.dataType).append(',')
+                    .append(COL_DELETED.name).append(' ').append(COL_DELETED.dataType)
                 .append(')')
             .toString();
     }
