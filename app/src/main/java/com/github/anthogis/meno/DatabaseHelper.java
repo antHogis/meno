@@ -58,13 +58,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      * @param category the category to add to the table in the database.
      * @throws SQLException if a category by the same name already exists in the table.
      */
-    public void add(ExpenseCategory category) throws SQLException {
+    public void add(ExpenseCategory category) throws SimilarCategoryExistsException {
         if (!categoryExistsIgnoreCase(category)) {
             ContentValues values = new ContentValues();
             values.put(CategoryTable.COL_NAME.name, category.getName());
             getWritableDatabase().insertOrThrow(CategoryTable.TABLE_NAME,null, values);
         } else {
-            throw new SQLException();
+            throw new SimilarCategoryExistsException();
         }
     }
 

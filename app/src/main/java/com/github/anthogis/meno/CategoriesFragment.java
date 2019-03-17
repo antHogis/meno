@@ -67,7 +67,7 @@ public class CategoriesFragment extends Fragment {
                 databaseHelper.add(new ExpenseCategory(categoryName));
                 reloadAdapter();
                 toastMessage =  getString(R.string.toast_category_add_success);
-            } catch (SQLException e) {
+            } catch (SimilarCategoryExistsException e) {
                 toastMessage = getString(R.string.toast_category_add_failure_duplicate);
             }
         } else {
