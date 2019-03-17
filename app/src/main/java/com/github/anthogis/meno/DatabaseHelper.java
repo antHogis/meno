@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.math.BigDecimal;
@@ -92,6 +93,38 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void deleteAllTableValues() {
         getWritableDatabase().delete(ExpenseTable.TABLE_NAME, null, null);
         getWritableDatabase().delete(CategoryTable.TABLE_NAME, null, null);
+    }
+
+    /**
+     * Deletes a category.
+     *
+     * Deletes a category if no expense in the table of expenses
+     * has a reference to it's ID. Otherwise the category is
+     * only marked as deleted, but remains in the table.
+     */
+    public void deleteCategory(ExpenseCategory category) {
+        boolean referenced = false;
+        Cursor cursor;
+
+        //Find id of category
+        int categoryId = findCategoryIdByName(category.getName());
+
+        //Find all expenses with reference to category id
+        String[] columns = {ExpenseTable.COL_CATEGORY.name};
+        String[] selectionArgs = {"" + categoryId};
+        String selection = ExpenseTable.COL_CATEGORY + "= ?";
+        cursor = getReadableDatabase().query(
+                ExpenseTable.TABLE_NAME,
+                columns,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+
+        Log.d("DEBUG", "Count: " + cursor.getCount());
+        cursor.close();
     }
 
     /**

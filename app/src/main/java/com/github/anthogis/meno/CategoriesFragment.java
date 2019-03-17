@@ -1,5 +1,6 @@
 package com.github.anthogis.meno;
 
+import android.app.Activity;
 import android.database.SQLException;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -62,9 +63,7 @@ public class CategoriesFragment extends Fragment {
         if (!categoryName.equals("")) {
             try {
                 databaseHelper.add(new ExpenseCategory(categoryName));
-                categoryArrayAdapter.clear();
-                categoryArrayAdapter.addAll(databaseHelper.findAllCategories());
-
+                reloadAdapter();
                 toastMessage =  getString(R.string.toast_category_add_success);
             } catch (SQLException e) {
                 toastMessage = getString(R.string.toast_category_add_failure_duplicate);
@@ -88,6 +87,15 @@ public class CategoriesFragment extends Fragment {
         dialog.show(getActivity().getSupportFragmentManager(), "foo_bar");
 
         return true;
+    }
+
+    private void reloadAdapter() {
+        categoryArrayAdapter.clear();
+        categoryArrayAdapter.addAll(databaseHelper.findAllCategories());
+    }
+
+    private void deleteCategory(ExpenseCategory category) {
+
     }
 
     public static class EditCategoryDialog extends AppCompatDialogFragment {
@@ -121,6 +129,7 @@ public class CategoriesFragment extends Fragment {
 
             if (executeEditButton.getState().equals(ButtonState.DELETE)) {
                 toastMessage = "Category deleted";
+
                 dismiss();
             } else {
                 toastMessage = "Category renamed";
