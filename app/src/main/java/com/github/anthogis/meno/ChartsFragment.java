@@ -1,5 +1,6 @@
 package com.github.anthogis.meno;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -7,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -14,8 +16,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Random;
 
+import lecho.lib.hellocharts.listener.PieChartOnValueSelectListener;
 import lecho.lib.hellocharts.model.PieChartData;
 import lecho.lib.hellocharts.model.SliceValue;
 import lecho.lib.hellocharts.view.PieChartView;
@@ -37,6 +40,7 @@ public class ChartsFragment extends Fragment {
         databaseHelper = ((MainActivity) getActivity()).getDatabaseHelper();
         pieChartView = view.findViewById(R.id.chart);
         pieChartView.setPieChartData(createPieCharData());
+        pieChartView.setOnValueTouchListener(new CategorySliceSelectListener());
         return view;
     }
 
@@ -73,10 +77,31 @@ public class ChartsFragment extends Fragment {
         List<SliceValue> rawPieData = new ArrayList<>(categorySums.size());
 
         for (String categoryName : categorySums.keySet()) {
-            rawPieData.add(new SliceValue(
-                    categorySums.get(categoryName).floatValue()).setLabel(categoryName));
+            rawPieData.add(new SliceValue(categorySums.get(categoryName).floatValue())
+                    .setLabel(categoryName));
         }
 
         return new PieChartData(rawPieData).setHasLabels(true);
+    }
+
+    private int randomColor() {
+        Random rand = new Random();
+        int r = (int) (rand.nextFloat() * 255) + 1;
+        int g = (int) (rand.nextFloat() * 255) + 1;
+        int b = (int) (rand.nextFloat() * 255) + 1;
+
+        return Color.argb(1, r,g,b);
+    }
+
+    private class CategorySliceSelectListener implements PieChartOnValueSelectListener {
+        @Override
+        public void onValueSelected(int arcIndex, SliceValue value) {
+            Toast.makeText(getContext(), "Sum: " + value.getValue(), Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onValueDeselected() {
+
+        }
     }
 }
