@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.github.anthogis.meno.exceptions.CategoryReferencedException;
+import com.github.anthogis.meno.exceptions.SimilarCategoryExistsException;
 import com.github.anthogis.meno.views.ButtonState;
 import com.github.anthogis.meno.views.StatefulButton;
 
@@ -107,12 +108,28 @@ public class CategoriesFragment extends Fragment {
             toastMessage = "Category could not be deleted";
         }
 
-        Toast.makeText(getContext(), toastMessage, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getContext(), toastMessage, Toast.LENGTH_LONG).show();
+    }
+
+    private void renameCategory(ExpenseCategory category, String newName) {
+        String toastMessage;
+
+        try {
+            databaseHelper.renameCategory(category, newName);
+            reloadAdapter();
+            toastMessage = "Category renamed";
+        } catch (SimilarCategoryExistsException e) {
+            toastMessage = "Category could not be renamed";
+        }
+
+        Toast.makeText(getContext(), toastMessage, Toast.LENGTH_LONG).show();
     }
 
     public static class EditCategoryDialog extends AppCompatDialogFragment {
         private static String categoryName;
         private static StatefulButton executeEditButton;
+        private static EditText renameCategoryField;
+
         @Nullable
         @Override
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -124,9 +141,10 @@ public class CategoriesFragment extends Fragment {
             super.onViewCreated(view, savedInstanceState);
             getDialog().setTitle(getString(R.string.title_rename_delete_category));
 
-            EditText renameCategoryField = (EditText) view.findViewById(R.id.renameCategoryText);
-            Button cancelButton = (Button) view.findViewById(R.id.dialog_edit_category_cancel);
+            renameCategoryField = (EditText) view.findViewById(R.id.renameCategoryText);
             executeEditButton = (StatefulButton) view.findViewById(R.id.dialog_edit_category_execute);
+            Button cancelButton = (Button) view.findViewById(R.id.dialog_edit_category_cancel);
+
 
             categoryName = getArguments().getString("CategoryName");
             renameCategoryField.setText(categoryName);
@@ -137,11 +155,15 @@ public class CategoriesFragment extends Fragment {
         }
 
         private void onExecuteEdit(View view) {
+            CategoriesFragment target = ((CategoriesFragment) getTargetFragment());
+
             if (executeEditButton.getState().equals(ButtonState.DELETE)) {
-                CategoriesFragment target = ((CategoriesFragment) getTargetFragment());
                 target.deleteCategory(new ExpenseCategory(categoryName));
                 dismiss();
             } else if(executeEditButton.getState().equals(ButtonState.RENAME))  {
+                target.renameCategory(
+                        new ExpenseCategory(categoryName),
+                        renameCategoryField.getText().toString());
                 dismiss();
             }
 

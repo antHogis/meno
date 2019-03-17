@@ -10,6 +10,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.github.anthogis.meno.exceptions.CategoryReferencedException;
+import com.github.anthogis.meno.exceptions.SimilarCategoryExistsException;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -138,6 +139,26 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     CategoryTable.TABLE_NAME,
                     whereClause,
                     whereArgs);
+        }
+    }
+
+    public void renameCategory(ExpenseCategory category, String newName)
+            throws SimilarCategoryExistsException {
+        if (!categoryExistsIgnoreCase(new ExpenseCategory(newName))) {
+            int categoryIndex = findCategoryIdByName(category.getName());
+
+            String whereClause = CategoryTable._ID.name + "= ?";
+            String[] whereArgs = {"" + categoryIndex};
+            ContentValues values = new ContentValues();
+            values.put(CategoryTable.COL_NAME.name, newName);
+
+            getWritableDatabase().update(
+                    CategoryTable.TABLE_NAME,
+                    values,
+                    whereClause,
+                    whereArgs);
+        } else {
+            throw new SimilarCategoryExistsException();
         }
     }
 
