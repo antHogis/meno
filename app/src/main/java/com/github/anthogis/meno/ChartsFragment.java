@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -77,7 +78,7 @@ public class ChartsFragment extends Fragment {
         List<SliceValue> rawPieData = new ArrayList<>(categorySums.size());
 
         for (String categoryName : categorySums.keySet()) {
-            rawPieData.add(new SliceValue(categorySums.get(categoryName).floatValue())
+            rawPieData.add(new SliceValue(categorySums.get(categoryName).floatValue(), randomColor())
                     .setLabel(categoryName));
         }
 
@@ -86,11 +87,11 @@ public class ChartsFragment extends Fragment {
 
     private int randomColor() {
         Random rand = new Random();
-        int r = (int) (rand.nextFloat() * 255) + 1;
-        int g = (int) (rand.nextFloat() * 255) + 1;
-        int b = (int) (rand.nextFloat() * 255) + 1;
+        int R = (int) (rand.nextFloat() * 255) + 1;
+        int G = (int) (rand.nextFloat() * 255) + 1;
+        int B = (int) (rand.nextFloat() * 255) + 1;
 
-        return Color.argb(1, r,g,b);
+        return (0xff) << 24 | (R & 0xff) << 16 | (G & 0xff) << 8 | (B & 0xff);
     }
 
     private class CategorySliceSelectListener implements PieChartOnValueSelectListener {
