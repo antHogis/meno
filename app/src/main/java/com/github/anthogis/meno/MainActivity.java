@@ -14,6 +14,8 @@ public class MainActivity extends AppCompatActivity {
 
     private DatabaseHelper databaseHelper;
 
+    private BottomNavigationView navigation;
+
     private BottomNavigationView.OnNavigationItemSelectedListener navListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -21,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             Fragment selectedFragment = null;
             boolean itemSelected = false;
+            navigation.getMenu().getItem(0).setCheckable(true);
 
             switch (item.getItemId()) {
                 case R.id.navigation_categories:
@@ -53,15 +56,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(navListener);
 
         databaseHelper = new DatabaseHelper(this);
 
         if (((MenoApplication) getApplication()).isFirstStarted()) {
             ((MenoApplication) getApplication()).setFirstStarted(false);
-
-            Log.d("MenoDebug", "Started");
+            navigation.getMenu().getItem(0).setCheckable(false);
+            getSupportFragmentManager().beginTransaction().replace(
+                    R.id.fragment_container, new StartupFragment()).commit();
         }
     }
 
