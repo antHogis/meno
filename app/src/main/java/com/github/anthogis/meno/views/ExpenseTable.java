@@ -7,9 +7,6 @@ import android.util.AttributeSet;
 import com.github.anthogis.meno.Expense;
 import com.github.anthogis.meno.R;
 
-import java.util.Comparator;
-import java.util.List;
-
 import de.codecrafters.tableview.SortableTableView;
 import de.codecrafters.tableview.toolkit.SimpleTableHeaderAdapter;
 import de.codecrafters.tableview.toolkit.TableDataRowBackgroundProviders;

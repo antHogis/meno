@@ -1,7 +1,5 @@
 package com.github.anthogis.meno;
 
-import android.app.Activity;
-import android.database.SQLException;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -27,7 +25,6 @@ import com.github.anthogis.meno.views.StatefulButton;
 public class CategoriesFragment extends Fragment {
 
     private DatabaseHelper databaseHelper;
-    private ListView categoryList;
     private EditText addCategoryField;
     private ArrayAdapter<ExpenseCategory> categoryArrayAdapter;
 
@@ -41,7 +38,7 @@ public class CategoriesFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_categories, container, false);
-        categoryList = (ListView) view.findViewById(R.id.categoryList);
+        ListView categoryList = (ListView) view.findViewById(R.id.categoryList);
         addCategoryField = (EditText) view.findViewById(R.id.addNewCategoryText);
         Button addCategoryButton = (Button) view.findViewById(R.id.addCategoryButton);
 

@@ -33,7 +33,6 @@ public class AddExpenseFragment extends Fragment {
     private AppCompatAutoCompleteTextView categoryField;
     private EditText costField;
     private EditText dateField;
-    private Button addExpenseButton;
     private List<ExpenseCategory> validCategories;
     private DatabaseHelper databaseHelper;
 
@@ -51,7 +50,7 @@ public class AddExpenseFragment extends Fragment {
         categoryField = (AppCompatAutoCompleteTextView) view.findViewById(R.id.editCategoryText);
         costField = (EditText) view.findViewById(R.id.editCostText);
         dateField = (EditText) view.findViewById(R.id.editDateText);
-        addExpenseButton = (Button) view.findViewById(R.id.addExpenseButton);
+        Button addExpenseButton = (Button) view.findViewById(R.id.addExpenseButton);
 
         addExpenseButton.setOnClickListener(this::onAddExpenseClicked);
         dateField.setOnFocusChangeListener(this::onDateFocus);
