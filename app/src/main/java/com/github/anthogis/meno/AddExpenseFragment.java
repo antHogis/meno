@@ -1,5 +1,6 @@
 package com.github.anthogis.meno;
 
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -105,12 +107,18 @@ public class AddExpenseFragment extends Fragment {
         if (addable) {
             databaseHelper.add(expense);
             toastMessage = getResources().getString(R.string.toast_expense_add_success);
+            hideSoftKeyboard();
             ((MenoApplication) getActivity().getApplication()).vibrateSuccess();
         } else {
             ((MenoApplication) getActivity().getApplication()).vibrateError();
         }
 
         Toast.makeText(getActivity(), toastMessage, Toast.LENGTH_SHORT).show();
+    }
+
+    private void hideSoftKeyboard() {
+        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
     }
 
     public static class MyDatePickerFragment extends DialogFragment {
