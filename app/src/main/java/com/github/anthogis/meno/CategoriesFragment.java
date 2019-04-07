@@ -27,7 +27,8 @@ public class CategoriesFragment extends Fragment {
     private DatabaseHelper databaseHelper;
     private EditText addCategoryField;
     private ArrayAdapter<ExpenseCategory> categoryArrayAdapter;
-    private Runnable vibrate;
+    private Runnable vibrateError;
+    private Runnable vibrateSuccess;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,8 +54,8 @@ public class CategoriesFragment extends Fragment {
 
         addCategoryButton.setOnClickListener(this::onAddCategory);
 
-        vibrate = ((MenoApplication) getActivity().getApplication())::vibrate;
-
+        vibrateError = ((MenoApplication) getActivity().getApplication())::vibrateError;
+        vibrateSuccess = ((MenoApplication) getActivity().getApplication())::vibrateSuccess;
         return view;
     }
 
@@ -76,8 +77,10 @@ public class CategoriesFragment extends Fragment {
             toastMessage = getString(R.string.toast_category_add_failure_empty);
         }
 
-        if (!successful) {
-            vibrate.run();
+        if (successful) {
+            vibrateSuccess.run();
+        } else {
+            vibrateError.run();
         }
 
         Toast.makeText(view.getContext(),
@@ -86,8 +89,6 @@ public class CategoriesFragment extends Fragment {
     }
 
     private boolean onCategoryLongClick(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(getContext(), "" + position, Toast.LENGTH_SHORT).show();
-
         EditCategoryDialog dialog = new EditCategoryDialog();
         Bundle argBundle = new Bundle();
         argBundle.putString("CategoryName", categoryArrayAdapter.getItem(position).getName());
@@ -112,10 +113,11 @@ public class CategoriesFragment extends Fragment {
             reloadAdapter();
             toastMessage = getString(R.string.toast_category_delete_success);
             toastLength = Toast.LENGTH_SHORT;
+            vibrateSuccess.run();
         } catch (CategoryReferencedException e) {
             toastMessage = getString(R.string.toast_category_delete_failure_referenced);
             toastLength = Toast.LENGTH_LONG;
-            vibrate.run();
+            vibrateError.run();
         }
 
         Toast.makeText(getContext(), toastMessage, toastLength).show();
@@ -130,10 +132,11 @@ public class CategoriesFragment extends Fragment {
             reloadAdapter();
             toastMessage = getString(R.string.toast_category_rename_success);
             toastLength = Toast.LENGTH_SHORT;
+            vibrateSuccess.run();
         } catch (SimilarCategoryExistsException e) {
             toastMessage = getString(R.string.toast_category_rename_failure_duplicate);
             toastLength = Toast.LENGTH_LONG;
-            vibrate.run();
+            vibrateError.run();
         }
 
         Toast.makeText(getContext(), toastMessage, toastLength).show();

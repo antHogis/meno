@@ -10,11 +10,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.github.anthogis.meno.exceptions.EmptyFieldException;
@@ -26,7 +24,6 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 public class AddExpenseFragment extends Fragment {
 
@@ -108,8 +105,9 @@ public class AddExpenseFragment extends Fragment {
         if (addable) {
             databaseHelper.add(expense);
             toastMessage = getResources().getString(R.string.toast_expense_add_success);
+            ((MenoApplication) getActivity().getApplication()).vibrateSuccess();
         } else {
-            ((MenoApplication) getActivity().getApplication()).vibrate();
+            ((MenoApplication) getActivity().getApplication()).vibrateError();
         }
 
         Toast.makeText(getActivity(), toastMessage, Toast.LENGTH_SHORT).show();
