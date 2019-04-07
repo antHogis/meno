@@ -9,8 +9,6 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
 
-    private DatabaseHelper databaseHelper;
-
     private BottomNavigationView navigation;
 
     private BottomNavigationView.OnNavigationItemSelectedListener navListener
@@ -56,17 +54,11 @@ public class MainActivity extends AppCompatActivity {
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(navListener);
 
-        databaseHelper = new DatabaseHelper(this);
-
         if (((MenoApplication) getApplication()).isFirstStarted()) {
             ((MenoApplication) getApplication()).setFirstStarted(false);
             navigation.getMenu().getItem(0).setCheckable(false);
             getSupportFragmentManager().beginTransaction().replace(
                     R.id.fragment_container, new StartupFragment()).commit();
         }
-    }
-
-    public DatabaseHelper getDatabaseHelper() {
-        return databaseHelper;
     }
 }

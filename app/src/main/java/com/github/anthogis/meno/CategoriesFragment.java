@@ -42,7 +42,7 @@ public class CategoriesFragment extends Fragment {
         addCategoryField = (EditText) view.findViewById(R.id.addNewCategoryText);
         Button addCategoryButton = (Button) view.findViewById(R.id.addCategoryButton);
 
-        databaseHelper = ((MainActivity) getActivity()).getDatabaseHelper();
+        databaseHelper = ((MenoApplication) getActivity().getApplication()).getDatabaseHelper();
         categoryArrayAdapter
                 = new ArrayAdapter<ExpenseCategory>(view.getContext(),
                         R.layout.adapter_expense_category_large);

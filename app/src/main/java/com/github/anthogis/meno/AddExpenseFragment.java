@@ -56,7 +56,7 @@ public class AddExpenseFragment extends Fragment {
         dateField.setOnFocusChangeListener(this::onDateFocus);
         dateField.setOnClickListener(this::onDateClicked);
 
-        databaseHelper = new DatabaseHelper(getContext());
+        databaseHelper = ((MenoApplication) getActivity().getApplication()).getDatabaseHelper();
         validCategories = databaseHelper.findAllCategories();
         ArrayAdapter<ExpenseCategory> adapter
                 = new ArrayAdapter<>(view.getContext(), R.layout.adapter_expense_category_small);

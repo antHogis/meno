@@ -28,7 +28,8 @@ public class ExpenseListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_expense_list, container, false);
 
-        List<Expense> expenseList = new DatabaseHelper(view.getContext()).findAllExpenses();
+        List<Expense> expenseList = ((MenoApplication) getActivity().getApplication())
+                .getDatabaseHelper().findAllExpenses();
 
         TableView<Expense> expenseTable = (ExpenseTable) view.findViewById(R.id.expenseTableView);
         expenseTable.setDataAdapter(new ExpenseTableDataAdapter(view.getContext(), expenseList));
