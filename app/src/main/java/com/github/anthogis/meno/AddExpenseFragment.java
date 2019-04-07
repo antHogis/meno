@@ -2,28 +2,24 @@ package com.github.anthogis.meno;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.VibrationEffect;
-import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.github.anthogis.meno.exceptions.EmptyFieldException;
 import com.github.anthogis.meno.exceptions.InvalidCategoryException;
+import com.github.anthogis.meno.views.ExpenseCategorySpinner;
 
 import java.math.BigDecimal;
 
@@ -34,10 +30,9 @@ import java.util.List;
 
 public class AddExpenseFragment extends Fragment {
 
-    private AppCompatAutoCompleteTextView categoryField;
+    private ExpenseCategorySpinner categorySpinner;
     private EditText costField;
     private EditText dateField;
-    private List<ExpenseCategory> validCategories;
     private DatabaseHelper databaseHelper;
 
     @Override
@@ -51,7 +46,7 @@ public class AddExpenseFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_add_expense, container, false);
 
-        categoryField = (AppCompatAutoCompleteTextView) view.findViewById(R.id.editCategoryText);
+        categorySpinner = (ExpenseCategorySpinner) view.findViewById(R.id.categorySpinner);
         costField = (EditText) view.findViewById(R.id.editCostText);
         dateField = (EditText) view.findViewById(R.id.editDateText);
         Button addExpenseButton = (Button) view.findViewById(R.id.addExpenseButton);
@@ -61,21 +56,9 @@ public class AddExpenseFragment extends Fragment {
         dateField.setOnClickListener(this::onDateClicked);
 
         databaseHelper = ((MenoApplication) getActivity().getApplication()).getDatabaseHelper();
-        validCategories = databaseHelper.findAllCategories();
-        ArrayAdapter<ExpenseCategory> adapter
-                = new ArrayAdapter<>(view.getContext(), R.layout.adapter_expense_category_small);
-        adapter.addAll(validCategories);
-
-        categoryField.setAdapter(adapter);
-        categoryField.setOnItemClickListener(this::onCategoryItemClicked);
-        categoryField.setThreshold(1);
+        categorySpinner.setExpenseCategories(databaseHelper.findAllCategories());
 
         return view;
-    }
-
-    private void onCategoryItemClicked(AdapterView<?> adapter, View v, int position, long id) {
-        ExpenseCategory category = (ExpenseCategory) adapter.getAdapter().getItem(position);
-        categoryField.setText(category.getName());
     }
 
     private void onDateFocus(View view, boolean hasFocus) {
@@ -100,18 +83,8 @@ public class AddExpenseFragment extends Fragment {
         Expense expense = null;
 
         try {
-            String categoryText = categoryField.getText().toString();
-
-            if (categoryText.equals("")) {
-                throw new EmptyFieldException();
-            } else if(!validCategoryName(categoryText)) {
-                throw new InvalidCategoryException();
-            } else {
-                category = new ExpenseCategory(categoryText);
-            }
-
+            category = categorySpinner.getSelectedCategory();
             cost = new BigDecimal(costField.getText().toString());
-
             String dateText = dateField.getText().toString();
 
             if (dateText.equals("")) {
@@ -140,16 +113,6 @@ public class AddExpenseFragment extends Fragment {
         }
 
         Toast.makeText(getActivity(), toastMessage, Toast.LENGTH_SHORT).show();
-    }
-
-    private boolean validCategoryName(String categoryName) {
-        for (ExpenseCategory category : validCategories) {
-            if (category.getName().equals(categoryName)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public static class MyDatePickerFragment extends DialogFragment {
