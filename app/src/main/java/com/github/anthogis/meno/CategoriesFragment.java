@@ -27,6 +27,7 @@ public class CategoriesFragment extends Fragment {
     private DatabaseHelper databaseHelper;
     private EditText addCategoryField;
     private ArrayAdapter<ExpenseCategory> categoryArrayAdapter;
+    private Runnable vibrate;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,23 +53,31 @@ public class CategoriesFragment extends Fragment {
 
         addCategoryButton.setOnClickListener(this::onAddCategory);
 
+        vibrate = ((MenoApplication) getActivity().getApplication())::vibrate;
+
         return view;
     }
 
     private void onAddCategory(View view) {
         String categoryName = addCategoryField.getText().toString();
         String toastMessage;
+        boolean successful = false;
 
         if (!categoryName.equals("")) {
             try {
                 databaseHelper.add(new ExpenseCategory(categoryName));
                 reloadAdapter();
                 toastMessage =  getString(R.string.toast_category_add_success);
+                successful = true;
             } catch (SimilarCategoryExistsException e) {
                 toastMessage = getString(R.string.toast_category_add_failure_duplicate);
             }
         } else {
             toastMessage = getString(R.string.toast_category_add_failure_empty);
+        }
+
+        if (!successful) {
+            vibrate.run();
         }
 
         Toast.makeText(view.getContext(),
@@ -106,6 +115,7 @@ public class CategoriesFragment extends Fragment {
         } catch (CategoryReferencedException e) {
             toastMessage = getString(R.string.toast_category_delete_failure_referenced);
             toastLength = Toast.LENGTH_LONG;
+            vibrate.run();
         }
 
         Toast.makeText(getContext(), toastMessage, toastLength).show();
@@ -123,6 +133,7 @@ public class CategoriesFragment extends Fragment {
         } catch (SimilarCategoryExistsException e) {
             toastMessage = getString(R.string.toast_category_rename_failure_duplicate);
             toastLength = Toast.LENGTH_LONG;
+            vibrate.run();
         }
 
         Toast.makeText(getContext(), toastMessage, toastLength).show();

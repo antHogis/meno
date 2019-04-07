@@ -1,6 +1,10 @@
 package com.github.anthogis.meno;
 
 import android.app.Application;
+import android.content.Context;
+import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 
 public class MenoApplication extends Application {
 
@@ -24,5 +28,14 @@ public class MenoApplication extends Application {
 
     public DatabaseHelper getDatabaseHelper() {
         return databaseHelper;
+    }
+
+    public void vibrate() {
+        Vibrator v = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            v.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+        } else {
+            v.vibrate(500);
+        }
     }
 }

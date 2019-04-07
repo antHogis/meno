@@ -2,7 +2,11 @@ package com.github.anthogis.meno;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -128,12 +132,11 @@ public class AddExpenseFragment extends Fragment {
             toastMessage = getResources().getString(R.string.toast_expense_add_failure_invalid_category);
         }
 
-        if (addable && expense != null) {
-            //TODO Implement call to persist Expense
+        if (addable) {
             databaseHelper.add(expense);
             toastMessage = getResources().getString(R.string.toast_expense_add_success);
-        } else if (addable) {
-
+        } else {
+            ((MenoApplication) getActivity().getApplication()).vibrate();
         }
 
         Toast.makeText(getActivity(), toastMessage, Toast.LENGTH_SHORT).show();
