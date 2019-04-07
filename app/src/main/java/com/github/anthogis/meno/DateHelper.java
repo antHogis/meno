@@ -1,6 +1,5 @@
 package com.github.anthogis.meno;
 
-import android.widget.EditText;
 import android.widget.TextView;
 
 import java.text.ParseException;

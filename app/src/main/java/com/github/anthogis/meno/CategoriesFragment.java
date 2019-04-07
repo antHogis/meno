@@ -1,7 +1,5 @@
 package com.github.anthogis.meno;
 
-import android.app.Activity;
-import android.database.SQLException;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -27,9 +25,10 @@ import com.github.anthogis.meno.views.StatefulButton;
 public class CategoriesFragment extends Fragment {
 
     private DatabaseHelper databaseHelper;
-    private ListView categoryList;
     private EditText addCategoryField;
     private ArrayAdapter<ExpenseCategory> categoryArrayAdapter;
+    private Runnable vibrateError;
+    private Runnable vibrateSuccess;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -41,11 +40,11 @@ public class CategoriesFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_categories, container, false);
-        categoryList = (ListView) view.findViewById(R.id.categoryList);
+        ListView categoryList = (ListView) view.findViewById(R.id.categoryList);
         addCategoryField = (EditText) view.findViewById(R.id.addNewCategoryText);
         Button addCategoryButton = (Button) view.findViewById(R.id.addCategoryButton);
 
-        databaseHelper = ((MainActivity) getActivity()).getDatabaseHelper();
+        databaseHelper = ((MenoApplication) getActivity().getApplication()).getDatabaseHelper();
         categoryArrayAdapter
                 = new ArrayAdapter<ExpenseCategory>(view.getContext(),
                         R.layout.adapter_expense_category_large);
@@ -55,23 +54,33 @@ public class CategoriesFragment extends Fragment {
 
         addCategoryButton.setOnClickListener(this::onAddCategory);
 
+        vibrateError = ((MenoApplication) getActivity().getApplication())::vibrateError;
+        vibrateSuccess = ((MenoApplication) getActivity().getApplication())::vibrateSuccess;
         return view;
     }
 
     private void onAddCategory(View view) {
         String categoryName = addCategoryField.getText().toString();
         String toastMessage;
+        boolean successful = false;
 
         if (!categoryName.equals("")) {
             try {
                 databaseHelper.add(new ExpenseCategory(categoryName));
                 reloadAdapter();
                 toastMessage =  getString(R.string.toast_category_add_success);
+                successful = true;
             } catch (SimilarCategoryExistsException e) {
                 toastMessage = getString(R.string.toast_category_add_failure_duplicate);
             }
         } else {
             toastMessage = getString(R.string.toast_category_add_failure_empty);
+        }
+
+        if (successful) {
+            vibrateSuccess.run();
+        } else {
+            vibrateError.run();
         }
 
         Toast.makeText(view.getContext(),
@@ -80,8 +89,6 @@ public class CategoriesFragment extends Fragment {
     }
 
     private boolean onCategoryLongClick(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(getContext(), "" + position, Toast.LENGTH_SHORT).show();
-
         EditCategoryDialog dialog = new EditCategoryDialog();
         Bundle argBundle = new Bundle();
         argBundle.putString("CategoryName", categoryArrayAdapter.getItem(position).getName());
@@ -106,9 +113,11 @@ public class CategoriesFragment extends Fragment {
             reloadAdapter();
             toastMessage = getString(R.string.toast_category_delete_success);
             toastLength = Toast.LENGTH_SHORT;
+            vibrateSuccess.run();
         } catch (CategoryReferencedException e) {
             toastMessage = getString(R.string.toast_category_delete_failure_referenced);
             toastLength = Toast.LENGTH_LONG;
+            vibrateError.run();
         }
 
         Toast.makeText(getContext(), toastMessage, toastLength).show();
@@ -123,9 +132,11 @@ public class CategoriesFragment extends Fragment {
             reloadAdapter();
             toastMessage = getString(R.string.toast_category_rename_success);
             toastLength = Toast.LENGTH_SHORT;
+            vibrateSuccess.run();
         } catch (SimilarCategoryExistsException e) {
             toastMessage = getString(R.string.toast_category_rename_failure_duplicate);
             toastLength = Toast.LENGTH_LONG;
+            vibrateError.run();
         }
 
         Toast.makeText(getContext(), toastMessage, toastLength).show();
