@@ -7,11 +7,27 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+/**
+ * The main Activity of the application.
+ *
+ * The main Activity of the application. Provides a container for Fragments and enables
+ * navigation between them.
+ *
+ * @author Anton Höglund
+ * @version 1.3
+ * @since 1.0
+ */
 public class MainActivity extends AppCompatActivity {
 
+    /**
+     * The BottomNavigationView of the Activity.
+     */
     private BottomNavigationView navigation;
 
-    private BottomNavigationView.OnNavigationItemSelectedListener navListener
+    /**
+     * Listener for the BottomNavigationView.
+     */
+    private BottomNavigationView.OnNavigationItemSelectedListener navigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
         @Override
@@ -46,13 +62,22 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     * Sets the content for the Activity.
+     *
+     * Sets the layout for this Activity. Displays a StartupFragment if MenoApplication field
+     * firstStarted is true, and sets it to false. Sets the listener for the BottomNavigationView
+     * in the layout.
+     *
+     * @param savedInstanceState - See the Android documentation for Activity.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(navListener);
+        navigation.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
 
         if (((MenoApplication) getApplication()).isFirstStarted()) {
             ((MenoApplication) getApplication()).setFirstStarted(false);
