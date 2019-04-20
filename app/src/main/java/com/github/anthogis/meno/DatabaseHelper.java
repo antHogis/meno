@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * DatabaseHelper is a helper class to access an SQLite database.
  *
- * @author antHogis
+ * @author Anton Höglund
  * @version 1.0
  * @since 1.0
  */

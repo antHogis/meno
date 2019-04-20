@@ -11,7 +11,7 @@ import java.util.GregorianCalendar;
 /**
  * Helper class for handling dates and strings of dates.
  *
- * @author antHogis
+ * @author Anton Höglund
  * @version 1.0
  * @since 1.0
  */
