@@ -24,17 +24,6 @@
             android:textAlignment="center"
             android:paddingStart="0dp"
             />
-        <!--
-        <android.support.v7.widget.AppCompatAutoCompleteTextView
-            android:id="@+id/editCategoryText"
-            style="@style/Widget.MaterialComponents.TextInputEditText.OutlinedBox"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:layout_centerHorizontal="true"
-            android:hint="@string/hint_category"
-            android:inputType="text"
-            android:textAlignment="center" />-->
 
         <EditText
             android:id="@+id/editCostText"
@@ -47,7 +36,6 @@
             android:inputType="numberDecimal"
             android:paddingStart="0dp"
             />
-            <!--android:nextFocusRight="@id/addExpenseButton"-->
 
 
         <EditText
