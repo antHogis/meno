@@ -36,4 +36,9 @@
     <string name="table_header_date">Date</string>
 
     <string name="id_date_picker">date_picker</string>
+
+    <string name="get_started_heading">Get started with Meno!</string>
+    <string name="get_started_step_1">Step 1: Create some categories to tag your expenses</string>
+    <string name="get_started_step_2">Step 2: Create an expense</string>
+    <string name="get_started_step_3">Step 3: View your expenses in the list or pie chart.</string>
 </resources>
