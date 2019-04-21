@@ -27,19 +27,54 @@ import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
+/**
+ * A fragment in which the user can create a new Expense.
+ *
+ * @author Anton Höglund
+ * @version 1.0
+ * @since 1.0
+ */
 public class AddExpenseFragment extends Fragment {
 
+    /**
+     * Spinner in the layout of the Fragment for selecting an ExpenseCategory for the Expense.
+     */
     private ExpenseCategorySpinner categorySpinner;
+
+    /**
+     * An input field in the layout of the Fragment for setting the cost of the Expense.
+     */
     private EditText costField;
+
+    /**
+     * An input field in the layout of the Fragment for setting the date of an Expense.
+     */
     private EditText dateField;
+
+    /**
+     * The DatabaseHelper used to persist Expenses.
+     */
     private DatabaseHelper databaseHelper;
 
+    /**
+     * Calls superclass onCreate and sets the title of the Activity this fragment is contained in.
+     *
+     * @param savedInstanceState see Android documentation for Fragment.
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().setTitle(R.string.title_add_expense);
     }
 
+    /**
+     * Creates the content and sets listeners for this fragment.
+     *
+     * @param inflater see Android documentation for Fragment.
+     * @param container see Android documentation for Fragment.
+     * @param savedInstanceState see Android documentation for Fragment.
+     * @return the view for the fragment's UI.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -60,6 +95,11 @@ public class AddExpenseFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Implementation of OnFocusChangeListener for dateField, opens a dialog for setting the date for an Expense.
+     * @param view see Android documentation for View.OnFocusChangeListener
+     * @param hasFocus see Android documentation for View.OnFocusChangeListener
+     */
     private void onDateFocus(View view, boolean hasFocus) {
         if (hasFocus) {
             DialogFragment dateFragment = new MyDatePickerFragment();
@@ -68,10 +108,22 @@ public class AddExpenseFragment extends Fragment {
         }
     }
 
+    /**
+     * Implementation of OnClickListener for dateField, calls onDateFocus.
+     * @param view see Android Documentation for View.OnClickListener.
+     */
     private void onDateClicked(View view) {
         onDateFocus(view, true);
     }
-    
+
+    /**
+     * Implementation of OnClickListener for the button clicked when the user wants to save the Expense.
+     *
+     * Implementation of OnClickListener for the button clicked when the user wants to save the Expense.
+     * Persist the Expense with DatabaseHelper if all the data of the Expense is valid, otherwise
+     * the user is informed of the error via Toast.
+     * @param view see Android documentation of View.OnClickListener.
+     */
     private void onAddExpenseClicked(View view) {
         boolean addable = false;
         String toastMessage = "";
@@ -116,12 +168,24 @@ public class AddExpenseFragment extends Fragment {
         Toast.makeText(getActivity(), toastMessage, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * Hides the keyboard displayed in the UI.
+     */
     private void hideSoftKeyboard() {
         InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Activity.INPUT_METHOD_SERVICE);
         inputMethodManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
     }
 
+    /**
+     * A dialog for picking the date for the new Expense from a calendar.
+     */
     public static class MyDatePickerFragment extends DialogFragment {
+
+        /**
+         * Sets the pre-selected date for the calendar, and the listener for when the date is picked.
+         * @param savedInstanceState see Android documentation for DialogFragment.onCreateDialog.
+         * @return see Android documentation for DialogFragment.onCreateDialog.
+         */
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
 
@@ -133,6 +197,13 @@ public class AddExpenseFragment extends Fragment {
             return new DatePickerDialog(getActivity(), this::dateSetAction, year, month, day);
         }
 
+        /**
+         * Implementation of DatePickerDialog.OnDateSetListener, adds the date picked in a string format to dateField.
+         * @param view see Android Documentation of DatePickerDialog.OnDateSetListener.
+         * @param year see Android Documentation of DatePickerDialog.OnDateSetListener.
+         * @param month see Android Documentation of DatePickerDialog.OnDateSetListener.
+         * @param day see Android Documentation of DatePickerDialog.OnDateSetListener.
+         */
         private void dateSetAction(DatePicker view, int year, int month, int day) {
             EditText dateField = (EditText) getActivity().findViewById(R.id.editDateText);
             String date = DateHelper.stringOf(year, month, day);
