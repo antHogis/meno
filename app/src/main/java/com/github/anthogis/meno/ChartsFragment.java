@@ -22,16 +22,44 @@ import lecho.lib.hellocharts.model.PieChartData;
 import lecho.lib.hellocharts.model.SliceValue;
 import lecho.lib.hellocharts.view.PieChartView;
 
+/**
+ * A fragment which displays pie charts created from database Expense data.
+ *
+ * @author Anton Höglund
+ * @version 1.0
+ * @since 1.0
+ */
 public class ChartsFragment extends Fragment {
+
+    /**
+     * The DatabaseHelper used in this fragment.
+     */
     private DatabaseHelper databaseHelper;
+
+    /**
+     * The View which portrays a pie chart.
+     */
     private PieChartView pieChartView;
 
+    /**
+     * Calls superclass onCreate and sets the title of the Activity this fragment is contained in.
+     *
+     * @param savedInstanceState see Android documentation for Fragment.
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getActivity().setTitle(R.string.title_charts);
     }
 
+    /**
+     * Creates the content and sets listeners for this fragment.
+     *
+     * @param inflater see Android documentation for Fragment.
+     * @param container see Android documentation for Fragment.
+     * @param savedInstanceState see Android documentation for Fragment.
+     * @return the view for the fragment's UI.
+     */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -43,6 +71,11 @@ public class ChartsFragment extends Fragment {
         return view;
     }
 
+    /**
+     * Creates data for the pie chart from database entries.
+     *
+     * @return the pie chart data.
+     */
     private PieChartData createPieCharData() {
         List<Expense> expenses = databaseHelper.findAllExpenses();
         List<ExpenseCategory> categories = databaseHelper.findAllCategories();
@@ -83,6 +116,10 @@ public class ChartsFragment extends Fragment {
         return new PieChartData(rawPieData).setHasLabels(true);
     }
 
+    /**
+     * Returns a random color integer in standard Android encoding.
+     * @return a random color integer.
+     */
     private int randomColor() {
         Random rand = new Random();
         int R = (int) (rand.nextFloat() * 255) + 1;
@@ -92,6 +129,9 @@ public class ChartsFragment extends Fragment {
         return (0xff) << 24 | (R & 0xff) << 16 | (G & 0xff) << 8 | (B & 0xff);
     }
 
+    /**
+     * Listener class for selecting slices on the pie chart.
+     */
     private class CategorySliceSelectListener implements PieChartOnValueSelectListener {
         @Override
         public void onValueSelected(int arcIndex, SliceValue value) {
