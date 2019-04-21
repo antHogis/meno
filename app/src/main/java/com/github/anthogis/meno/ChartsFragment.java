@@ -133,11 +133,21 @@ public class ChartsFragment extends Fragment {
      * Listener class for selecting slices on the pie chart.
      */
     private class CategorySliceSelectListener implements PieChartOnValueSelectListener {
+
+        /**
+         * Displays a toast of the value in the selected pie chart slice.
+         *
+         * @param arcIndex the index of the slice in the pie chart.
+         * @param value the SliceValue of the selected slice.
+         */
         @Override
         public void onValueSelected(int arcIndex, SliceValue value) {
             Toast.makeText(getContext(), "Sum: " + value.getValue(), Toast.LENGTH_SHORT).show();
         }
 
+        /**
+         * Mandatory method implemented, does nothing.
+         */
         @Override
         public void onValueDeselected() {
 
