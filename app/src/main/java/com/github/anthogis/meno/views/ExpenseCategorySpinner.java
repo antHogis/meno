@@ -2,6 +2,7 @@ package com.github.anthogis.meno.views;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v7.widget.AppCompatSpinner;
 import android.util.AttributeSet;
 import android.view.View;
@@ -146,6 +147,21 @@ public class ExpenseCategorySpinner extends AppCompatSpinner {
         @Override
         public boolean isEnabled(int position) {
             return position != 0;
+        }
+
+        /**
+         * Returns the Spinner View, after editing the text color.
+         * @param position
+         * @param convertView
+         * @param parent
+         * @return
+         */
+        @Override
+        public View getView(int position, View convertView,ViewGroup parent) {
+            View view = super.getView(position, convertView, parent);
+            ((TextView) view).setTextColor(ResourcesCompat.getColor(getResources(), R.color.hintColor, null));
+
+            return view;
         }
 
         /**

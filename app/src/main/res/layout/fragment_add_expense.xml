@@ -23,6 +23,7 @@
             android:layout_centerHorizontal="true"
             android:textAlignment="center"
             android:paddingStart="0dp"
+            style="@style/Widget.AppCompat.Spinner.Underlined"
             />
 
         <EditText
@@ -33,6 +34,7 @@
             android:layout_centerHorizontal="true"
             android:ems="10"
             android:hint="@string/hint_cost"
+            android:textColorHint="@color/hintColor"
             android:inputType="numberDecimal"
             android:paddingStart="0dp"
             />
@@ -46,6 +48,7 @@
             android:layout_centerHorizontal="true"
             android:ems="10"
             android:hint="@string/hint_date"
+            android:textColorHint="@color/hintColor"
             android:inputType="date"
             android:nextFocusRight="@id/addExpenseButton"
             android:paddingStart="0dp"
