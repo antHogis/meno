@@ -159,7 +159,12 @@ public class ExpenseCategorySpinner extends AppCompatSpinner {
         @Override
         public View getView(int position, View convertView,ViewGroup parent) {
             View view = super.getView(position, convertView, parent);
-            ((TextView) view).setTextColor(ResourcesCompat.getColor(getResources(), R.color.hintColor, null));
+
+            if (position == 0) {
+                ((TextView) view).setTextColor(ResourcesCompat.getColor(getResources(), R.color.hintColor, null));
+            } else {
+                ((TextView) view).setTextColor(Color.BLACK);
+            }
 
             return view;
         }
