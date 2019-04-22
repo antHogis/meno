@@ -54,6 +54,11 @@ public class ChartsFragment extends Fragment implements AdapterView.OnItemSelect
     private final static String ALL_MONTHS = "All";
 
     /**
+     * Indicates that the fragment just initialized (this value is to control the month spinner's listener).
+     */
+    private boolean justInitialized = true;
+
+    /**
      * Calls superclass onCreate and sets the title of the Activity this fragment is contained in.
      *
      * @param savedInstanceState see Android documentation for Fragment.
@@ -181,9 +186,12 @@ public class ChartsFragment extends Fragment implements AdapterView.OnItemSelect
      */
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        String month = parent.getItemAtPosition(position).toString();
-
-        pieChartView.setPieChartData(createPieCharData(month));
+        if (!justInitialized) {
+            String month = parent.getItemAtPosition(position).toString();
+            pieChartView.setPieChartData(createPieCharData(month));
+        } else {
+            justInitialized = false;
+        }
     }
 
     /**
