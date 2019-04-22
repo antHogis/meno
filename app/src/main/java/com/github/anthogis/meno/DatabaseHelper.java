@@ -21,7 +21,7 @@ import java.util.List;
  * DatabaseHelper is a helper class to access an SQLite database.
  *
  * @author Anton Höglund
- * @version 1.0
+ * @version 1.3
  * @since 1.0
  */
 public class DatabaseHelper extends SQLiteOpenHelper {
