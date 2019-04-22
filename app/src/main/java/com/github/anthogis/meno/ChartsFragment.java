@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,13 +15,12 @@ import android.widget.Toast;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeSet;
 
 import lecho.lib.hellocharts.listener.PieChartOnValueSelectListener;
 import lecho.lib.hellocharts.model.PieChartData;
@@ -159,8 +157,12 @@ public class ChartsFragment extends Fragment implements AdapterView.OnItemSelect
         return (0xff) << 24 | (R & 0xff) << 16 | (G & 0xff) << 8 | (B & 0xff);
     }
 
+    /**
+     * Creates an ArrayAdapter for the Spinner containing month Strings.
+     * @return the ArrayAdapter for the Spinner containing month Strings.
+     */
     private ArrayAdapter<String> createMonthSpinnerAdapter() {
-        Set<String> uniqueMonthSet = new HashSet<>();
+        Set<String> uniqueMonthSet = new TreeSet<>();
 
         for (Expense expense : databaseHelper.findAllExpenses()) {
             String yearAndMonth = DateHelper.stringOf(expense.getDate()).substring(0, 7);
