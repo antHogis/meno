@@ -224,11 +224,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * TODO javadoc
-     * @param sortOrder
-     * @param selection
-     * @param selectionArgs
-     * @return
+     * Helper method for retrieving expenses.
+     *
+     * @param sortOrder the sort order of the expenses.
+     * @param selection the where clause for the query
+     * @param selectionArgs the arguments for the selection
+     * @return the expenses from the query.
      */
     private List<Expense> findAllExpensesHelper(String sortOrder,
                                                 String selection,
