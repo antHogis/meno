@@ -43,8 +43,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     /**
-     * TODO javadoc
-     * @param context
+     * Constructs this DatabaseHelper,
+     *
+     * Constructs this DatabaseHelper, calls super constructor with params Context, String,
+     * SqLiteDatabase.CursorFactory, int.
+     *
+     * @param context the context this DatabaseHelper is used in.
      */
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -103,7 +107,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Deletes the given expense by it's id
+     * Deletes the given expense by it's id.
+     *
      * @param expense the expense to delete.
      */
     public void deleteExpense(Expense expense) {
@@ -157,10 +162,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * TODO javadoc
-     * @param category
-     * @param newName
-     * @throws SimilarCategoryExistsException
+     * Renames the given ExpenseCategory, if one by the same name (ignoring case) does not exist.
+     *
+     * @param category the ExpenseCategory to rename.
+     * @param newName the new name of the ExpenseCategory.
+     * @throws SimilarCategoryExistsException if an ExpenseCategory by the same name (ignoring case) already exists.
      */
     public void renameCategory(ExpenseCategory category, String newName)
             throws SimilarCategoryExistsException {
