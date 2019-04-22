@@ -9,12 +9,9 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.github.anthogis.meno.views.ExpenseTable;
 import com.github.anthogis.meno.views.ExpenseTableDataAdapter;
-
-import java.util.List;
 
 import de.codecrafters.tableview.TableView;
 
@@ -28,23 +25,23 @@ import de.codecrafters.tableview.TableView;
 public class ExpenseListFragment extends Fragment {
 
     /**
-     * TODO javadoc
+     * The DatabaseHelper used in this fragment.
      */
     private DatabaseHelper databaseHelper;
 
     /**
-     * TODO javadoc
+     * The graphical table of Expenses.
      */
     private TableView<Expense> expenseTable;
 
     /**
-     * TODO javadoc
+     * The expense the user has clicked in the table of Expenses.
      */
     private Expense selectedExpense = null;
 
     /**
      * Calls onCreate in superclass, and sets the title of MainActivity.
-     * @param savedInstanceState see Android documentation for Fragment
+     * @param savedInstanceState see Android documentation for Fragment.
      */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,9 +55,9 @@ public class ExpenseListFragment extends Fragment {
      * Sets the layout for this Fragment, and sets the DataAdapter for the ExpenseTable
      * in the layout.
      *
-     * @param inflater see Android documentation for Fragment
-     * @param container see Android documentation for Fragment
-     * @param savedInstanceState see Android documentation for Fragment
+     * @param inflater see Android documentation for Fragment.
+     * @param container see Android documentation for Fragment.
+     * @param savedInstanceState see Android documentation for Fragment.
      * @return the view created by the inflater.
      */
     @Nullable
@@ -82,9 +79,10 @@ public class ExpenseListFragment extends Fragment {
     }
 
     /**
-     * TODO javadoc
-     * @param rowIndex
-     * @param clickedExpense
+     * Implementation of TableDataClickListener, opens a Dialog where the user can delete clicked Expense.
+     *
+     * @param rowIndex the row index of the clicked Expense in the table.
+     * @param clickedExpense the clicked Expense.
      */
     private void onTableRowClick(final int rowIndex, final Expense clickedExpense) {
         selectedExpense = clickedExpense;
@@ -107,17 +105,18 @@ public class ExpenseListFragment extends Fragment {
         alertDialogBuilder
                 .setTitle(R.string.title_delete_expense_dialog)
                 .setMessage(expenseInfo)
-                .setPositiveButton(R.string.button_delete, this::deleteTableClickListener)
-                .setNegativeButton(R.string.button_cancel, this::deleteTableClickListener)
+                .setPositiveButton(R.string.button_delete, this::deleteExpenseClickListener)
+                .setNegativeButton(R.string.button_cancel, this::deleteExpenseClickListener)
                 .show();
     }
 
     /**
-     * TODO javadoc
-     * @param dialog
-     * @param which
+     * Implementation of DialogClickListener for dialog where user can delete an Expense.
+     *
+     * @param dialog the dialog that received the click.
+     * @param which the button that was clicked.
      */
-    private void deleteTableClickListener(DialogInterface dialog, int which) {
+    private void deleteExpenseClickListener(DialogInterface dialog, int which) {
         boolean dismiss = false;
         boolean reload = false;
 
