@@ -41,6 +41,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     private Context context;
 
+
+    /**
+     * TODO javadoc
+     * @param context
+     */
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.context = context;
@@ -98,6 +103,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     /**
+     * Deletes the given expense by it's id
+     * @param expense the expense to delete.
+     */
+    public void deleteExpense(Expense expense) {
+        String whereClause = ExpenseTable._ID.name + "= ?";
+        String[] whereArgs = {expense.getId().toString()};
+        getWritableDatabase().delete(ExpenseTable.TABLE_NAME, whereClause, whereArgs);
+    }
+
+    /**
      * Deletes a category.
      *
      * Deletes a category if no expense in the table of expenses
@@ -141,6 +156,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * TODO javadoc
+     * @param category
+     * @param newName
+     * @throws SimilarCategoryExistsException
+     */
     public void renameCategory(ExpenseCategory category, String newName)
             throws SimilarCategoryExistsException {
         if (!categoryExistsIgnoreCase(new ExpenseCategory(newName))) {
@@ -254,10 +275,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         while (cursor.moveToNext()) {
             try {
+                int idIndex = cursor.getColumnIndexOrThrow(ExpenseTable._ID.name);
                 int categoryIndex = cursor.getColumnIndexOrThrow(ExpenseTable.COL_CATEGORY.name);
                 int costIndex = cursor.getColumnIndexOrThrow(ExpenseTable.COL_COST.name);
                 int dateIndex = cursor.getColumnIndexOrThrow(ExpenseTable.COL_DATE.name);
 
+                int id = cursor.getInt(idIndex);
                 String categoryString = findCategoryNameById(cursor.getInt(categoryIndex));
                 String costString = cursor.getString(costIndex);
                 String dateString = cursor.getString(dateIndex);
@@ -266,7 +289,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 BigDecimal cost = new BigDecimal(costString);
                 Date date = DateHelper.parse(dateString);
 
-                expenses.add(new Expense(category, cost, date));
+                Expense expense = new Expense(category, cost, date);
+                expense.setId(id);
+                expenses.add(expense);
             } catch (SQLException | ParseException e) {
                 Toast.makeText(context,
                         context.getResources().getString(R.string.toast_expense_get_failure),

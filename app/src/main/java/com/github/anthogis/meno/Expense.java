@@ -6,7 +6,12 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
+/**
+ * TODO javadoc
+ */
 public class Expense implements Serializable {
+
+    private Integer id;
 
     private ExpenseCategory category;
 
@@ -14,9 +19,7 @@ public class Expense implements Serializable {
 
     private Date date;
 
-    public Expense() {
-
-    }
+    public Expense() {}
 
     public Expense(@NonNull ExpenseCategory category,
                    @NonNull BigDecimal cost,
@@ -62,11 +65,20 @@ public class Expense implements Serializable {
         }
     }
 
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         return new StringBuilder()
                 .append(super.toString())
                 .append(" {")
+                .append("ID:").append(id).append(", ")
                 .append("Category:").append(category.getName()).append(", ")
                 .append("Cost:").append(cost.toString()).append(", ")
                 .append("Date:").append(DateHelper.stringOf(date))
