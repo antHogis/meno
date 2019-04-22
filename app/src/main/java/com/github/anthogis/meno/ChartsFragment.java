@@ -4,18 +4,25 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import lecho.lib.hellocharts.listener.PieChartOnValueSelectListener;
 import lecho.lib.hellocharts.model.PieChartData;
@@ -29,7 +36,7 @@ import lecho.lib.hellocharts.view.PieChartView;
  * @version 1.0
  * @since 1.0
  */
-public class ChartsFragment extends Fragment {
+public class ChartsFragment extends Fragment implements AdapterView.OnItemSelectedListener {
 
     /**
      * The DatabaseHelper used in this fragment.
@@ -40,6 +47,11 @@ public class ChartsFragment extends Fragment {
      * The View which portrays a pie chart.
      */
     private PieChartView pieChartView;
+
+    /**
+     * Constant for selecting all months in the month selection spinner.
+     */
+    private final static String ALL_MONTHS = "All";
 
     /**
      * Calls superclass onCreate and sets the title of the Activity this fragment is contained in.
@@ -65,19 +77,33 @@ public class ChartsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_charts, container, false);
         databaseHelper = ((MenoApplication) getActivity().getApplication()).getDatabaseHelper();
+
         pieChartView = view.findViewById(R.id.chart);
-        pieChartView.setPieChartData(createPieCharData());
+        pieChartView.setPieChartData(createPieCharData(ALL_MONTHS));
         pieChartView.setOnValueTouchListener(new CategorySliceSelectListener());
+
+        Spinner monthSpinner = (Spinner) view.findViewById(R.id.month_spinner);
+        ArrayAdapter<String> monthAdapter = createMonthSpinnerAdapter();
+        monthAdapter.setDropDownViewResource(R.layout.support_simple_spinner_dropdown_item);
+        monthSpinner.setAdapter(monthAdapter);
+        monthSpinner.setOnItemSelectedListener(this);
+
         return view;
     }
 
     /**
-     * Creates data for the pie chart from database entries.
+     * Creates pie chart data from Expenses during a specified month.
      *
+     * Creates pie chart data from Expenses during a specified month. Expenses from all time
+     * can be obtained by passing constant ALL_MONTHS as argument.
+     *
+     * @param month the month to obtain data from
      * @return the pie chart data.
      */
-    private PieChartData createPieCharData() {
-        List<Expense> expenses = databaseHelper.findAllExpenses();
+    private PieChartData createPieCharData(String month) {
+        List<Expense> expenses = month.equals(ALL_MONTHS) ? databaseHelper.findAllExpenses()
+                : databaseHelper.findAllExpensesWhereDateStartsWith(month);
+        Log.d("Charts", "expenses length: " + expenses.size());
         List<ExpenseCategory> categories = databaseHelper.findAllCategories();
         Map<String, BigDecimal> categorySums = new HashMap<>(categories.size());
 
@@ -127,6 +153,48 @@ public class ChartsFragment extends Fragment {
         int B = (int) (rand.nextFloat() * 255) + 1;
 
         return (0xff) << 24 | (R & 0xff) << 16 | (G & 0xff) << 8 | (B & 0xff);
+    }
+
+    private ArrayAdapter<String> createMonthSpinnerAdapter() {
+        Set<String> uniqueMonthSet = new HashSet<>();
+
+        for (Expense expense : databaseHelper.findAllExpenses()) {
+            String yearAndMonth = DateHelper.stringOf(expense.getDate()).substring(0, 7);
+            uniqueMonthSet.add(yearAndMonth);
+        }
+
+        List<String> uniqueMonthList = new ArrayList<>();
+        uniqueMonthList.add(ALL_MONTHS);
+        uniqueMonthList.addAll(uniqueMonthSet);
+        Log.d("CHARTS", "unique months:" + uniqueMonthList.size());
+
+        return new ArrayAdapter<>(getActivity(),
+                R.layout.adapter_expense_category_small,
+                new ArrayList<>(uniqueMonthList));
+    }
+
+    /**
+     * Sets the pie chart data according to the month selected from the spinner.
+     *
+     * @param parent the AdapterView where the selection Happened
+     * @param view the view within the AdapterView that was clicked.
+     * @param position the position of the view in the adapter.
+     * @param id the row id of the item that was selected.
+     */
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        String month = parent.getItemAtPosition(position).toString();
+
+        pieChartView.setPieChartData(createPieCharData(month));
+    }
+
+    /**
+     * Mandatory method of AdapterView.OnItemSelectedListener, does nothing.
+     * @param parent the AdapterView that now contains no selected item.
+     */
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 
     /**

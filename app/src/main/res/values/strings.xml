@@ -11,6 +11,7 @@
     <string name="hint_cost">Cost</string>
     <string name="hint_date">Date (Default: today)</string>
     <string name="hint_rename_category">Rename category</string>
+    <string name="hint_select_month">Select month</string>
 
     <string name="button_cancel">Cancel</string>
     <string name="button_rename">Rename</string>

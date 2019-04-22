@@ -173,12 +173,71 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public List<Expense> findAllExpenses() {
         String sortOrder = ExpenseTable.COL_DATE.name + " DESC";
+        return findAllExpensesHelper(sortOrder, null, null);
+    }
 
+    /**
+     * Retrieves all expenses from the table of expenses in the database where the date string starts with given argument.
+     *
+     * @param dateStartString the string that the date should start with.
+     * @return the filtered expenses from the database.
+     */
+    public List<Expense> findAllExpensesWhereDateStartsWith(String dateStartString) {
+        String sortOrder = ExpenseTable.COL_DATE.name + " DESC";
+        String selection = ExpenseTable.COL_DATE.name + " LIKE ?";
+        String[] selectionArgs = {dateStartString + '%'};
+
+        return findAllExpensesHelper(sortOrder, selection, selectionArgs);
+    }
+
+    /**
+     * Retrieves all categories form the table of categories in the database.
+     *
+     * @return the categories from the database.
+     */
+    public List<ExpenseCategory> findAllCategories() {
+        String sortOrder = CategoryTable.COL_NAME.name + " ASC";
+        String[] columns = {CategoryTable.COL_NAME.name};
+
+        Cursor cursor = getReadableDatabase().query(
+                CategoryTable.TABLE_NAME,
+                columns,
+                null,
+                null,
+                null,
+                null,
+                sortOrder
+        );
+
+        List<ExpenseCategory> categories = new ArrayList<>(cursor.getCount());
+
+        while(cursor.moveToNext()) {
+            int nameIndex = cursor.getColumnIndex(CategoryTable.COL_NAME.name);
+
+            ExpenseCategory category = new ExpenseCategory();
+            category.setName(cursor.getString(nameIndex));
+            categories.add(category);
+        }
+        cursor.close();
+
+        return categories;
+    }
+
+    /**
+     * TODO javadoc
+     * @param sortOrder
+     * @param selection
+     * @param selectionArgs
+     * @return
+     */
+    private List<Expense> findAllExpensesHelper(String sortOrder,
+                                                String selection,
+                                                String[] selectionArgs) {
         Cursor cursor = getReadableDatabase().query(
                 ExpenseTable.TABLE_NAME,
                 null,
-                null,
-                null,
+                selection,
+                selectionArgs,
                 null,
                 null,
                 sortOrder
@@ -213,42 +272,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         Toast.LENGTH_SHORT).show();
             }
         }
-            cursor.close();
-
-        return expenses;
-    }
-
-    /**
-     * Retrieves all categories form the table of categories in the database.
-     *
-     * @return the categories from the database.
-     */
-    public List<ExpenseCategory> findAllCategories() {
-        String sortOrder = CategoryTable.COL_NAME.name + " ASC";
-        String[] columns = {CategoryTable.COL_NAME.name};
-
-        Cursor cursor = getReadableDatabase().query(
-                CategoryTable.TABLE_NAME,
-                columns,
-                null,
-                null,
-                null,
-                null,
-                sortOrder
-        );
-
-        List<ExpenseCategory> categories = new ArrayList<>(cursor.getCount());
-
-        while(cursor.moveToNext()) {
-            int nameIndex = cursor.getColumnIndex(CategoryTable.COL_NAME.name);
-
-            ExpenseCategory category = new ExpenseCategory();
-            category.setName(cursor.getString(nameIndex));
-            categories.add(category);
-        }
         cursor.close();
 
-        return categories;
+        return expenses;
     }
 
     /**
