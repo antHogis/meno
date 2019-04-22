@@ -1,6 +1,7 @@
 # Built application files
 *.apk
 *.ap_
+!meno-release-3.apk
 
 # Files for the ART/Dalvik VM
 *.dex
