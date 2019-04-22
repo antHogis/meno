@@ -103,7 +103,6 @@ public class ChartsFragment extends Fragment implements AdapterView.OnItemSelect
     private PieChartData createPieCharData(String month) {
         List<Expense> expenses = month.equals(ALL_MONTHS) ? databaseHelper.findAllExpenses()
                 : databaseHelper.findAllExpensesWhereDateStartsWith(month);
-        Log.d("Charts", "expenses length: " + expenses.size());
         List<ExpenseCategory> categories = databaseHelper.findAllCategories();
         Map<String, BigDecimal> categorySums = new HashMap<>(categories.size());
 
@@ -166,7 +165,6 @@ public class ChartsFragment extends Fragment implements AdapterView.OnItemSelect
         List<String> uniqueMonthList = new ArrayList<>();
         uniqueMonthList.add(ALL_MONTHS);
         uniqueMonthList.addAll(uniqueMonthSet);
-        Log.d("CHARTS", "unique months:" + uniqueMonthList.size());
 
         return new ArrayAdapter<>(getActivity(),
                 R.layout.adapter_expense_category_small,
